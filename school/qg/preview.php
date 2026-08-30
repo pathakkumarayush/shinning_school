@@ -372,17 +372,11 @@ input[type=submit]:hover, .qg-btn-legacy:hover {
                 <?php endforeach; ?>
             <?php endif; ?>
 
-            <div style="margin-top:40px; border-top:1px solid #000000; padding-top:10px; display:flex; justify-content:space-between; font-size:11px; font-weight:bold">
-                <div>INVIGILATOR SIGNATURE</div>
-                <div>PRINCIPAL SIGNATURE</div>
-            </div>
-
             <!-- Bottom footer line and footer content -->
             <div class="qg-footer-divider"></div>
             <div class="qg-paper-footer">
-                <div style="width:33%; text-align:left">1 | Page</div>
-                <div style="width:33%; text-align:center">Q- </div>
-                <div style="width:33%; text-align:right">Date - ----------------</div>
+                <div style="width:50%; text-align:left">Q- </div>
+                <div style="width:50%; text-align:right">Date - ----------------</div>
             </div>
         </div>
     </div>

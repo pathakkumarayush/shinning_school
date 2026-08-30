@@ -290,23 +290,12 @@ if ($format === 'docx') {
                 endforeach; ?>
             <?php endforeach; ?>
 
-            <div style="margin-top: 40px;">
+            <div style="margin-top: 30px;">
                 <hr style="border: 0; border-top: 1px solid #000000; margin-bottom: 10px;" />
                 <table style="width:100%; font-weight:bold; font-size:10pt" border="0" cellspacing="0" cellpadding="0">
                     <tr>
-                        <td style="width:50%; text-align:left">INVIGILATOR SIGNATURE</td>
-                        <td style="width:50%; text-align:right">PRINCIPAL SIGNATURE</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div style="margin-top: 20px;">
-                <hr style="border: 0; border-top: 1px solid #000000; margin-bottom: 10px;" />
-                <table style="width:100%; font-weight:bold; font-size:10pt" border="0" cellspacing="0" cellpadding="0">
-                    <tr>
-                        <td style="width:33%; text-align:left">1 | Page</td>
-                        <td style="width:33%; text-align:center">Q- </td>
-                        <td style="width:34%; text-align:right">Date - ----------------</td>
+                        <td style="width:50%; text-align:left">Q- </td>
+                        <td style="width:50%; text-align:right">Date - ----------------</td>
                     </tr>
                 </table>
             </div>
@@ -613,16 +602,10 @@ if ($format === 'docx') {
             <?php endforeach; ?>
         </div>
 
-        <div class="signatures-row">
-            <div>INVIGILATOR SIGNATURE</div>
-            <div>PRINCIPAL SIGNATURE</div>
-        </div>
-
         <div class="footer-divider"></div>
         <div class="paper-footer">
-            <div style="width:33%; text-align:left">1 | Page</div>
-            <div style="width:33%; text-align:center">Q- </div>
-            <div style="width:33%; text-align:right">Date - ----------------</div>
+            <div style="width:50%; text-align:left">Q- </div>
+            <div style="width:50%; text-align:right">Date - ----------------</div>
         </div>
     </div>
 </body>
