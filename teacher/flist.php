@@ -1,0 +1,77 @@
+<script type="text/javascript">
+    function printpage() {
+        //Get the print button and put it into a variable
+        var printButton = document.getElementById("printpagebutton");
+        //Set the print button visibility to 'hidden' 
+        printButton.style.visibility = 'hidden';
+        //Print the page content
+        window.print()
+        //Set the print button to 'visible' again 
+        //[Delete this line if you want it to stay hidden after printing]
+        printButton.style.visibility = 'visible';
+    }
+</script>
+
+<table border="1" cellspacing="0" cellpadding="0" style="width:900px;">
+							 <tr style="font-weight:bold">
+	    <td>Sr</td>
+        <td>Name</td>
+		<td>Father Name</td>
+		<td>Mother Name</td>
+        <td>Class</td>
+		<td>D.O.B</td>
+		<td>Previous Class</td>
+		<td>PREVIOUS SCHOOL</td>
+	    <td>Mobile</td>
+		<td>Address</td>
+        <td>City</td>
+	    <td>State</td>
+		<td>Follow Date</td>
+				  <td>Conversation</td>
+				  <td>Status</td>
+				  <td>Next Date</td>
+		
+		
+       </tr>
+       <?php
+      session_start();
+	  require_once("../db.php"); 
+	  $i=1;
+	
+	   
+	    $search=mysqli_query($con,"select * from enquiry where follow='1' and session='".$_GET['ses']."' ");
+		
+		while($studrow=mysqli_fetch_array($search))
+		{
+		
+		$res_stud=mysqli_query($con,"select * from follow_up where eno='".$studrow['id']."' order by id desc")or die(mysqli_error());
+        $rowstud=mysqli_fetch_array($res_stud);
+	     ?>	
+       <tr style="color:#335599">
+        <td><?php echo $i; ?></td>
+	    <td><?php echo $studrow['name'];?></td>
+        <td><?php echo $studrow['fname'];?></td>
+	    <td><?php echo $studrow['mname'];?></td>
+	    <td><?php echo $studrow['aclass'];?></td>
+	    <td><?php echo $studrow['dob'];?></td>
+	    <td><?php echo $studrow['pclass'];?></td> 
+	    <td><?php echo $studrow['percentage'];?></td> 
+		<td><?php echo $studrow['mobile'];?></td> 
+		<td><?php echo $studrow['address'];?></td> 
+		<td><?php echo $studrow['city'];?></td> 
+		<td><?php echo $studrow['st'];?></td> 
+		
+		           <td><?php echo $rowstud['date'] ?></td>
+				  <td><?php echo $rowstud['decs'] ?></td>
+                  <td><?php echo $rowstud['status'] ?></td>
+				  <td><?php echo $rowstud['ndate'] ?></td>
+        </tr>
+    <?php
+    $i++;
+	
+	}
+	
+	  
+	?>
+	  <input id="printpagebutton" style="" type="button" value="Print Receipt" onClick="printpage()"/>
+	</table>

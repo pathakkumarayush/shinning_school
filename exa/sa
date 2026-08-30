@@ -1,0 +1,27 @@
+<div class="table" style="height:60px; width:930px; margin-top:50px; left:50px">
+          <span  style="color:#FF0000; font-size:18px; margin-left:170px">Take Backup of Your Database</span>
+   <table width="50%" border="0" cellspacing="0" cellpadding="0" style="margin-left:170px; margin-top:40px">
+	<tr style="font-weight:bold">
+<tr style="font-size:14px"><td><b>Sr.No</b></td><td><b>User Name</b></td><td><b>Export Database</b></td> <?php
+	  if($_GET['id']==1)
+	  {
+	?><td><b>Download</b></td> <?php } ?></tr>
+<tr>
+     <td><b>1</b></td>
+    <td style="border-bottom:1px solid silver;"><b>Demo</b></td>
+    <td style="border-bottom:1px solid silver;"><a href="#"><b>Export</b></a></td>
+	<?php
+	  if($_GET['id']==1)
+	  {
+	?>
+<td style="border-bottom:1px solid silver;"> <a style="color:#CC0000; font-weight:bold;" href="download.php?download_file=<?php echo $_SESSION['file'];  ?>">Download here</a></td>
+   <?php
+     }
+   ?>
+   </tr>
+   
+</table>
+
+
+</div>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>

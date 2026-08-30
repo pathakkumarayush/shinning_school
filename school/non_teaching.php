@@ -1,0 +1,288 @@
+<html>
+<head>
+<script language="javascript">
+function download_report()
+{
+window.location='report.xls';
+}
+</script>
+<script type="text/javascript">
+		function popitup(url) 
+		{
+		 newwindow=window.open(url,'name','height=635,width=723');
+	     if (window.focus) {newwindow.focus()}
+	     return false;
+       }
+</script>
+<style>
+.enquiry{ width:100%; height:45px;background-color:#FFFFFF; margin-top:10px; border:4px #006633 solid;}
+
+.col_4{ width:100%; height:auto; margin-left:2px; background-color:#FFFFFF;float:left; margin-top:10px;-webkit-box-shadow: 0 0 10px rgba(0,0,0, .65);
+-moz-box-shadow: 0 0 10px rgba(0,0,0, .65);
+box-shadow: 0 0 10px rgba(0,0,0, .65);}
+::-webkit-input-placeholder {
+    color:    #000;
+}
+:-moz-placeholder {
+    color:    #000;
+}
+::-moz-placeholder {
+    color:    #000;
+}
+:-ms-input-placeholder {
+    color:    #000;
+}
+
+
+.form-style-2-heading{
+    font-weight: bold;
+    font-style: italic;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 20px;
+    font-size: 15px;
+    padding:10px;
+}
+
+input[type="text"],input[type="email"],input[type="number"] {
+    padding: 5px;
+    border: solid 5px #c9c9c9;
+    box-shadow: inset 0 0 0 1px #707070;
+    transition: box-shadow 0.3s, border 0.3s;
+    height: 20px;
+}
+.select {
+    padding: 5px;
+    border: solid 5px #c9c9c9;
+    box-shadow: inset 0 0 0 1px #707070;
+    transition: box-shadow 0.3s, border 0.3s;
+    height: 40px;
+}
+.input-mini{
+    padding: 5px;
+    border: solid 5px #c9c9c9;
+    box-shadow: inset 0 0 0 1px #707070;
+    transition: box-shadow 0.3s, border 0.3s;
+    height: 37px;
+}
+textarea{
+    padding: 5px;
+    border: solid 5px #c9c9c9;
+    box-shadow: inset 0 0 0 1px #707070;
+    transition: box-shadow 0.3s, border 0.3s;
+    height: 40px;
+}
+input[type="text"]:focus,
+input[type="text"].focus {
+  border: solid 5px #339933;
+  background-color:#eaeaea;
+}
+input[type="email"]:focus,
+input[type="email"].focus {
+  border: solid 5px #339933;
+  background-color:#eaeaea;
+}
+textarea:focus{border: solid 5px #339933;background-color:#eaeaea;}
+input[type=submit],
+input[type=button]{
+    border: none;
+    background: #FF8500;
+    color: #fff;
+    box-shadow: 1px 1px 4px #DADADA;
+    -moz-box-shadow: 1px 1px 4px #DADADA;
+    -webkit-box-shadow: 1px 1px 4px #DADADA;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+	padding:10px;
+	font-weight:bold;
+	
+	
+}
+input[type=submit]:hover,
+input[type=button]:hover{
+    background: #EA7B00;
+    color: #fff;
+}
+
+.row-fluid .span6 {
+    width: 48%;
+	float:left;
+   
+    margin-top: 10px;
+    margin-left: 5px;
+}
+.pagination {
+margin-left:20px;
+   
+}
+.pagination ul {
+    display: inline-block;
+    *display: inline;
+    margin-bottom: 0;
+    margin-left: 50px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    *zoom: 1;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.pagination ul > li {
+    display: inline;
+}
+.pagination ul > li:first-child > a, .pagination ul > li:first-child > span {
+    border-left-width: 1px;
+    -webkit-border-bottom-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    -webkit-border-top-left-radius: 4px;
+    border-top-left-radius: 4px;
+    -moz-border-radius-bottomleft: 4px;
+    -moz-border-radius-topleft: 4px;
+}
+.pagination ul > li > a, .pagination ul > li > span {
+    float: left;
+    padding: 4px 12px;
+    line-height: 20px;
+    text-decoration: none;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-left-width: 0;
+}
+.pagination ul > li > a:hover, .pagination ul > li > a:focus, .pagination ul > .active > a, .pagination ul > .active > span {
+    background-color: #f5f5f5;
+}
+.pagination ul > .active > a, .pagination ul > .active > span {
+    color: #999;
+    cursor: default;
+}
+.table{ width:100%; margin-top:10px;}
+.dataTables_filter{ margin-top:-18px; padding:10px;}
+</style>
+</head>
+<body alink="#00FF66" link="#00CC00">
+
+<div class="full_div">
+<br clear="all" />
+<div class="left_sect"><img src="images/Pay Roll/staff.png" /><a href="./?pageid=staff_home">
+<img src="images/buttonGoBack.png"  style="float:right; width:150px; height:60px;"/></a></div>
+<div class="shell">
+<div class="shell_main">
+<div class="enquiry">
+<img src="images/tech.png"  style=" float:left; width:60px; height:40px;"/>
+<h2 style="float:left; margin-left:10px; text-transform:uppercase; color:#006633; font-size:20px; margin-top:15px;">Non-Teaching Staff Details </h2>
+<a href="./?pageid=staff_detail" style="color:#FFFFFF;float:right; background-color:#009966; margin-top:10px; padding:6px; font-size:18px">Teaching Staff Details</a>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="./?pageid=group_d" style="color:#FFFFFF;float:right; margin-left:-20px; background-color: #CC0000; margin-top:10px; padding:6px; font-size:18px">Group D</a>
+</div>
+<?php
+if(!empty($_GET['did']))
+{
+$delete=mysqli_query($con,"update teacher set status='inactive' where teacher_id='".$_GET['did']."' and teacher_session='".$_SESSION['session']."'");
+} 
+?>
+<?php
+$maxid=mysqli_query($con,"select count(teacher_id) from teacher where staff_typ='nonteaching' and teacher_session='".$_SESSION['session']."' ");
+$maxrow=mysqli_fetch_array($maxid);
+$rowmax=mysqli_fetch_array($maxid);
+?>
+<?php
+
+            $sch=mysqli_query($con,"select * from school");
+			$rowsch=mysqli_fetch_array($sch);
+			$rowsch['school_name'];
+
+?>
+<div class="col_4">
+<div class="form-style-2-heading">Total Teacher: <?php echo $maxrow['count(teacher_id)']; ?>
+
+</div>
+<table class="table table-bordered" id="sample_1" style="font-size:12px; ">
+              <thead style="background-color:#009933; color:#FFFFFF">
+               <tr style="background-color:#009933;color:#FFFFFF">
+                    <th><input type="checkbox" id="selectAll">All </th>
+                  <th>No.</th>
+				 
+				  <th>Name</th>
+                  <th>Father/Husband</th>
+                  <th>Gender</th>
+				  <th>Date of birth</th>
+                  <th>Qualification</th>
+				  <th>Address</th>
+                  <th>Action</th>
+              </tr>
+			  </thead>
+			  <tbody>
+			  <?php
+    $sql=mysqli_query($con,"select * from teacher where staff_typ='nonteaching' and status='Active' and teacher_session='".$_SESSION['session']."'");
+	
+	$i=1;
+	while($row=mysqli_fetch_array( $sql))
+	{
+		?>
+               <tr>
+                  <td><input type="checkbox" name="ids[]" value="<?php echo $row['id']; ?>"></td>
+                  <td><?php echo $i;  ?></td>
+				
+                  <td><?php echo $row['teacher_name'] ?></td>
+                  <td><?php echo $row['father_name'] ?></td>
+                  <td class="center "><?php echo $row['teacher_gender'] ?></td>
+                  <td><?php echo $row['teacher_dob'] ?></td>
+                  <td><?php echo $row['teacher_qualifi'] ?></td>
+				  <td><?php echo $row['address'] ?></td>
+                
+		 <td><a href="<?php echo $var."addstaff&uid=".$row["teacher_id"];  ?>" target="_blank">Edit</a> &nbsp;||&nbsp;
+                <a href="<?php echo $var."staff_detail&did=".$row['id']; ?>"  >Delete</a> &nbsp;||&nbsp;
+				<a href="<?php echo $var."tdoc&tid=".$row['teacher_id']; ?>" target="_blank">Upload Document</a> 
+			    <br>
+			
+			    <a href="javascript:void(0)" style="color:#FF0000" onClick="return popitup('https://smarterponline.com//shining/school/cer.php?tid=<?php echo $row['id']."&ses=".$_SESSION['session'];  ?>')">Exp. Certificate</a>
+			  </td>
+			  
+              </tr>
+              
+            
+    <?php
+	 $i++;
+	}
+	?>
+          </tbody>
+		  
+         <!-- <tfoot><tr><td colspan="10">  <input type="button" value="Print ID Cards " id="printcheckbox" style="width:125px;color:#FF0000;"></td> </tr></tfoot>-->
+          </table>
+ 
+		  
+</div>
+
+<br clear="all" />
+</div>
+<br clear="all" />
+</div>
+</div>
+<script>
+     document.getElementById('selectAll').addEventListener('change', function () {
+        const checkboxes = document.querySelectorAll('input[name="ids[]"]');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+      });
+  
+     document.getElementById('printcheckbox').addEventListener('click', function () {
+          const checkboxes = document.querySelectorAll('input[name="ids[]"]:checked');
+          if (checkboxes.length === 0) {
+            alert('Please select at least one teacher.');
+            return;
+          }
+        
+          // Submit the form normally for ID Cards
+              let ids = [];
+              checkboxes.forEach(cb => ids.push(cb.value));
+              const ses = '<?php echo $_SESSION["session"]; ?>';
+            
+              const url = `https://smarterponline.com/shining/school/selected_id_cardT.php?ses=${ses}&ids=${ids.join(",")}`;
+              popitup(url);
+        });
+</script>
+   <script src="js/jquery-1.8.3.min.js"></script>
+   <script type="text/javascript" src="js/jquery.dataTables.js"></script>
+   <script type="text/javascript" src="js/DT_bootstrap.js"></script>
+   <script src="js/dynamic-table.js"></script>
+ 

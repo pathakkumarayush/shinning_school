@@ -1,0 +1,485 @@
+{
+	"info": {
+		"_postman_id": "8f3b610c-93d4-4a57-b08e-3269b2d699e1",
+		"name": "Shining School - Question Paper Generator API",
+		"description": "Comprehensive Postman API Collection for Section-Based Question Paper Generator Module in Shining School ERP.\n\n### Key Features:\n- Section-based hierarchy: **Paper → Sections/Headings → Questions**\n- All 7 Supported Question Types:\n  1. `mcq` (Multiple Choice Questions with A, B, C, D options)\n  2. `fill_blank` (Fill in the blanks with `______`)\n  3. `true_false` (True & False with `(        )`)\n  4. `matching` (Matching columns with dynamic pairs)\n  5. `one_word` (Answer in One Word or Sentence with `Answer: ______________________`)\n  6. `image_question` (Image Questions with uploaded diagram/figure)\n  7. `other` (Descriptive / open-ended questions)\n- Custom display class (`paper_class_name` e.g. \"XI – A\")\n- Flexible non-decimal & decimal marks (`1`, `0.5`, `1.5`, `2`, `5`, `10`)\n- Role-based visibility and teacher attribution (`create_by` / `user_id`)\n- PDF and Word (DOC) exports",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost/shining_school",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "admin",
+			"type": "string"
+		},
+		{
+			"key": "paper_uuid",
+			"value": "8b02547b-fa18-4d9d-b98a-f4165b2175e4",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Authentication",
+			"item": [
+				{
+					"name": "User Login (Get Bearer Token)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"    pm.collectionVariables.set(\"user_id\", jsonData.uid || \"admin\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "pass",
+									"value": "admin",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"login.php"
+							]
+						},
+						"description": "Authenticate user credentials and retrieve a Bearer access token."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Metadata & Helpers",
+			"item": [
+				{
+					"name": "Get Metadata (Question Types, Settings, Classes)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/qg/get_metadata.php?session=2026-2027",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"qg",
+								"get_metadata.php"
+							],
+							"query": [
+								{
+									"key": "session",
+									"value": "2026-2027"
+								},
+								{
+									"key": "class_id",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "subject_id",
+									"value": "1682",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Fetches active classes, subjects, paper settings (default instructions & watermark), active teachers, and supported 7 question types."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Question Paper Management",
+			"item": [
+				{
+					"name": "Create Section-Based Question Paper (All 7 Question Types)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.status && jsonData.data && jsonData.data.uuid) {",
+									"    pm.collectionVariables.set(\"paper_uuid\", jsonData.data.uuid);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"create_by\": \"{{user_id}}\",\n  \"exam_name\": \"Annual Examination 2026-27\",\n  \"class_id\": 0,\n  \"paper_class_name\": \"XI – A\",\n  \"subject_id\": 1682,\n  \"duration_minutes\": 180,\n  \"max_marks\": 100,\n  \"instructions\": \"1. All questions are compulsory.\\n2. Read each question carefully before attempting.\\n3. Write your answers clearly and neatly.\",\n  \"watermark_text\": \"S.P.S.\",\n  \"sections\": [\n    {\n      \"heading\": \"SECTION-A (CHOOSE THE CORRECT OPTION)\",\n      \"instruction\": \"Choose the correct option for each question:\",\n      \"question_type\": \"mcq\",\n      \"questions\": [\n        {\n          \"question_text\": \"Which of the following is a polynomial expression?\",\n          \"marks\": 1,\n          \"mcq_options\": [\"4x + 2\", \"1/x + 3\", \"sqrt(x) - 4\", \"x^(-2) + 5\"]\n        },\n        {\n          \"question_text\": \"The smallest prime number is:\",\n          \"marks\": 1,\n          \"mcq_options\": [\"0\", \"1\", \"2\", \"3\"]\n        }\n      ]\n    },\n    {\n      \"heading\": \"SECTION-B (FILL IN THE BLANKS)\",\n      \"instruction\": \"Fill in the blanks with appropriate answers:\",\n      \"question_type\": \"fill_blank\",\n      \"questions\": [\n        {\n          \"question_text\": \"The sum of all internal angles of a triangle is ______ degrees.\",\n          \"marks\": 1.5\n        },\n        {\n          \"question_text\": \"The distance around a closed geometric circle is known as its ______.\",\n          \"marks\": 1\n        }\n      ]\n    },\n    {\n      \"heading\": \"SECTION-C (TRUE & FALSE)\",\n      \"instruction\": \"Write True or False for the following statements:\",\n      \"question_type\": \"true_false\",\n      \"questions\": [\n        {\n          \"question_text\": \"Every square is also a rectangle.\",\n          \"marks\": 1\n        }\n      ]\n    },\n    {\n      \"heading\": \"SECTION-D (MATCHING)\",\n      \"instruction\": \"Match Column A with Column B:\",\n      \"question_type\": \"matching\",\n      \"questions\": [\n        {\n          \"question_text\": \"Match the following geometrical figures with their number of sides:\",\n          \"marks\": 4,\n          \"match_pairs\": [\n            {\n              \"left\": \"Triangle\",\n              \"right\": \"3 Sides\"\n            },\n            {\n              \"left\": \"Quadrilateral\",\n              \"right\": \"4 Sides\"\n            },\n            {\n              \"left\": \"Pentagon\",\n              \"right\": \"5 Sides\"\n            },\n            {\n              \"left\": \"Hexagon\",\n              \"right\": \"6 Sides\"\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"heading\": \"SECTION-E (ANSWER IN ONE WORD OR SENTENCE)\",\n      \"instruction\": \"Answer each question in one word or sentence:\",\n      \"question_type\": \"one_word\",\n      \"questions\": [\n        {\n          \"question_text\": \"What is the capital of Madhya Pradesh?\",\n          \"marks\": 1\n        }\n      ]\n    },\n    {\n      \"heading\": \"SECTION-F (IMAGE QUESTION)\",\n      \"instruction\": \"Observe the diagram and answer the question:\",\n      \"question_type\": \"image_question\",\n      \"questions\": [\n        {\n          \"question_text\": \"Identify the geometric theorem demonstrated in the figure below.\",\n          \"marks\": 5,\n          \"image_path\": \"upload/qg/sample_diagram.png\"\n        }\n      ]\n    },\n    {\n      \"heading\": \"SECTION-G (DESCRIPTIVE)\",\n      \"instruction\": \"Solve the problem with complete steps:\",\n      \"question_type\": \"other\",\n      \"questions\": [\n        {\n          \"question_text\": \"Prove that root 5 is an irrational number.\",\n          \"marks\": 10\n        }\n      ]\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/qg/create.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"qg",
+								"create.php"
+							]
+						},
+						"description": "Creates a section-based question paper with arbitrary section headings, sub-instructions, flexible marks, custom display class name (`paper_class_name`), and all 7 supported question types without requiring correct answer selection."
+					},
+					"response": []
+				},
+				{
+					"name": "List Question Papers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/qg/list.php?create_by={{user_id}}&session=2026-2027",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"qg",
+								"list.php"
+							],
+							"query": [
+								{
+									"key": "create_by",
+									"value": "{{user_id}}"
+								},
+								{
+									"key": "session",
+									"value": "2026-2027"
+								},
+								{
+									"key": "class_id",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "subject_id",
+									"value": "1682",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "draft",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Retrieves list of question papers. Admin users see all papers; teachers see only their own papers."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Question Paper Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/qg/get.php?uuid={{paper_uuid}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"qg",
+								"get.php"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": "{{paper_uuid}}"
+								}
+							]
+						},
+						"description": "Retrieves complete hierarchical data of a question paper including sections, questions, and matching/MCQ options."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Question Paper",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"uuid\": \"{{paper_uuid}}\",\n  \"create_by\": \"{{user_id}}\",\n  \"exam_name\": \"Annual Examination 2026-27 (Revised)\",\n  \"class_id\": 0,\n  \"paper_class_name\": \"XI – A\",\n  \"subject_id\": 1682,\n  \"duration_minutes\": 180,\n  \"max_marks\": 100,\n  \"instructions\": \"1. All questions are compulsory.\\n2. Read each question carefully before attempting.\",\n  \"sections\": [\n    {\n      \"heading\": \"SECTION-A\",\n      \"instruction\": \"Choose the correct option:\",\n      \"question_type\": \"mcq\",\n      \"questions\": [\n        {\n          \"question_text\": \"Which of the following is a polynomial?\",\n          \"marks\": 1,\n          \"mcq_options\": [\"3x + 1\", \"1/x\", \"sqrt(x)\", \"x^-1\"]\n        }\n      ]\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/qg/update.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"qg",
+								"update.php"
+							]
+						},
+						"description": "Updates paper details and replaces section/question hierarchy transactionally."
+					},
+					"response": []
+				},
+				{
+					"name": "Publish Question Paper",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"uuid\": \"{{paper_uuid}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/qg/publish.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"qg",
+								"publish.php"
+							]
+						},
+						"description": "Changes the status of a question paper from 'draft' to 'published'."
+					},
+					"response": []
+				},
+				{
+					"name": "Duplicate Question Paper",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"uuid\": \"{{paper_uuid}}\",\n  \"create_by\": \"{{user_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/qg/duplicate.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"qg",
+								"duplicate.php"
+							]
+						},
+						"description": "Clones an existing question paper with all its sections and questions as a new draft copy."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Question Paper",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"uuid\": \"{{paper_uuid}}\",\n  \"create_by\": \"{{user_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/qg/delete.php",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"qg",
+								"delete.php"
+							]
+						},
+						"description": "Soft-deletes a question paper by setting deleted_at timestamp."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Print & Export",
+			"item": [
+				{
+					"name": "Download PDF / Printable View",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/qg/download.php?uuid={{paper_uuid}}&format=pdf&token={{token}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"qg",
+								"download.php"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": "{{paper_uuid}}"
+								},
+								{
+									"key": "format",
+									"value": "pdf"
+								},
+								{
+									"key": "token",
+									"value": "{{token}}"
+								}
+							]
+						},
+						"description": "Streams clean printable HTML view formatted for direct printing to PDF with watermark, signatures, section headings, and Date line."
+					},
+					"response": []
+				},
+				{
+					"name": "Download Word Document (DOC)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/qg/download.php?uuid={{paper_uuid}}&format=docx&token={{token}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"qg",
+								"download.php"
+							],
+							"query": [
+								{
+									"key": "uuid",
+									"value": "{{paper_uuid}}"
+								},
+								{
+									"key": "format",
+									"value": "docx"
+								},
+								{
+									"key": "token",
+									"value": "{{token}}"
+								}
+							]
+						},
+						"description": "Streams Microsoft Word compatible (.doc) file download of the section-based question paper."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

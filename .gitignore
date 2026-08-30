@@ -1,0 +1,18 @@
+# Ignore upload directories
+upload/
+*/upload/
+school/upload/
+uploads/
+*/uploads/
+
+# Ignore OS and environment files
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.temp
+
+# IDE / Editor directories
+.vscode/
+.idea/
+.agents/
