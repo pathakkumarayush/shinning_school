@@ -375,8 +375,7 @@ input[type=submit]:hover, .qg-btn-legacy:hover {
             <!-- Bottom footer line and footer content -->
             <div class="qg-footer-divider"></div>
             <div class="qg-paper-footer">
-                <div style="width:50%; text-align:left">Q- </div>
-                <div style="width:50%; text-align:right">Date - ----------------</div>
+                <div style="width:100%; text-align:right">Date - ----------------</div>
             </div>
         </div>
     </div>

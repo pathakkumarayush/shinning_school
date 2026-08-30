@@ -294,8 +294,7 @@ if ($format === 'docx') {
                 <hr style="border: 0; border-top: 1px solid #000000; margin-bottom: 10px;" />
                 <table style="width:100%; font-weight:bold; font-size:10pt" border="0" cellspacing="0" cellpadding="0">
                     <tr>
-                        <td style="width:50%; text-align:left">Q- </td>
-                        <td style="width:50%; text-align:right">Date - ----------------</td>
+                        <td style="width:100%; text-align:right">Date - ----------------</td>
                     </tr>
                 </table>
             </div>
@@ -604,8 +603,7 @@ if ($format === 'docx') {
 
         <div class="footer-divider"></div>
         <div class="paper-footer">
-            <div style="width:50%; text-align:left">Q- </div>
-            <div style="width:50%; text-align:right">Date - ----------------</div>
+            <div style="width:100%; text-align:right">Date - ----------------</div>
         </div>
     </div>
 </body>
