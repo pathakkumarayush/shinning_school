@@ -84,6 +84,7 @@ try {
         'message' => 'Documents fetched successfully',
         'data' => [
             'student_id' => $student_id,
+            'scholar_no' => $student['student_scholar'] ?? '',
             'student_name' => $student['student_name'] ?? '',
             'session' => $session,
             'documents' => $documents

@@ -2,10 +2,12 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-date_default_timezone_set('Asia/Kolkata');
-header('Content-Type: application/json');
+if (!headers_sent()) {
+    header('Content-Type: application/json');
+}
 
 require __DIR__ . '/../../db.php';
+global $con;
 
 // Validate request method
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -39,6 +41,21 @@ if (!$checkQ || mysqli_num_rows($checkQ) === 0) {
     exit;
 }
 $existing = mysqli_fetch_assoc($checkQ);
+
+require_once __DIR__ . '/syllabus_auth_helper.php';
+$auth = resolveSyllabusUser($con, $input);
+if (!$auth['is_admin']) {
+    if (empty($auth['uid'])) {
+        http_response_code(401);
+        echo json_encode(['status' => false, 'message' => 'User identification (user_id / created_by / token) is required']);
+        exit;
+    }
+    if (trim($existing['created_by']) !== trim($auth['uid'])) {
+        http_response_code(403);
+        echo json_encode(['status' => false, 'message' => 'Authorization error: You can only update your own syllabus']);
+        exit;
+    }
+}
 
 // Build update fields
 $updateFields = [];

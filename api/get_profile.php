@@ -47,6 +47,12 @@ if (!$result || mysqli_num_rows($result) == 0) {
 }
 
 $data = mysqli_fetch_assoc($result);
+if ($session_type == 'teacher') {
+    $data['id'] = (int)($data['id'] ?? 0);
+    $data['teacher_id'] = (int)($data['teacher_id'] ?? $data['id']);
+    $data['login_password'] = $data['login_pass'] ?? '';
+}
+
 if ($session_type == 'student' && !empty($data['student_img'])) {
     $data['student_img'] = 'school/upload/' . basename($data['student_img']);
 }

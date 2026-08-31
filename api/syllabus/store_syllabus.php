@@ -2,10 +2,12 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-date_default_timezone_set('Asia/Kolkata');
-header('Content-Type: application/json');
+if (!headers_sent()) {
+    header('Content-Type: application/json');
+}
 
 require __DIR__ . '/../../db.php';
+global $con;
 
 // Ensure syllabus table exists
 $createTableQuery = "CREATE TABLE IF NOT EXISTS `syllabus` (
@@ -118,6 +120,32 @@ if (!empty($errors)) {
     exit;
 }
 
+require_once __DIR__ . '/syllabus_auth_helper.php';
+
+// Verify Authorization / Assignment
+$auth = resolveSyllabusUser($con, $input);
+$teacher_uid = $auth['uid'];
+
+if (!$auth['is_admin']) {
+    if (empty($teacher_uid)) {
+        http_response_code(401);
+        echo json_encode(['status' => false, 'message' => 'User identification (user_id / created_by / token) is required']);
+        exit;
+    }
+
+    $isAssigned = isTeacherAssignedToSubject($con, $teacher_uid, $class, $subject, $session);
+    if (!$isAssigned) {
+        http_response_code(403);
+        echo json_encode([
+            'status' => false,
+            'message' => 'Authorization error: You are only allowed to create syllabus for your assigned class and subject'
+        ]);
+        exit;
+    }
+}
+
+$effective_created_by = !empty($teacher_uid) ? $teacher_uid : ($user_id !== '' ? $user_id : 'admin');
+
 // Sanitize inputs
 $class_esc       = mysqli_real_escape_string($con, $class);
 $subject_esc     = mysqli_real_escape_string($con, $subject);
@@ -125,7 +153,7 @@ $chapters_json   = mysqli_real_escape_string($con, json_encode($chapterList, JSO
 $description_esc = mysqli_real_escape_string($con, $description);
 $remark_esc      = mysqli_real_escape_string($con, $remark);
 $session_esc     = mysqli_real_escape_string($con, $session);
-$created_by_esc  = mysqli_real_escape_string($con, $user_id);
+$created_by_esc  = mysqli_real_escape_string($con, $effective_created_by);
 
 $insertQuery = "INSERT INTO `syllabus` 
                 (`class`, `subject`, `chapters`, `description`, `remark`, `session`, `created_by`, `status`) 
