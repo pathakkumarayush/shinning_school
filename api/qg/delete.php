@@ -7,12 +7,18 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . '/../../db.php';
 require_once __DIR__ . '/../../school/qg/db_helpers.php';
+require_once __DIR__ . '/auth_helper.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['status' => false, 'message' => 'Only POST method is allowed']);
     exit;
 }
+
+// Authenticate via token
+$auth = qg_authenticate($con, true);
+$session_uid = $auth['uid'];
+$is_admin = $auth['is_admin'];
 
 // Decode JSON input
 $input = file_get_contents("php://input");
@@ -28,8 +34,6 @@ if (empty($uuid)) {
     exit;
 }
 
-$request_user = isset($data['create_by']) ? trim($data['create_by']) : (isset($data['user_id']) ? trim($data['user_id']) : (isset($session_uid) ? $session_uid : ''));
-$is_admin = ($request_user === 'admin' || $request_user === 'shining');
 $school_id = 'shining';
 
 try {
@@ -41,7 +45,7 @@ try {
     }
 
     // Authorization check
-    if (!empty($request_user) && !$is_admin && strtolower($paper['created_by']) !== strtolower($request_user)) {
+    if (!$is_admin && strtolower($paper['created_by']) !== strtolower($session_uid)) {
         http_response_code(403);
         echo json_encode(['status' => false, 'message' => 'Unauthorized: You can only delete question papers created by you']);
         exit;
@@ -54,7 +58,7 @@ try {
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
 
-        qg_log_audit($con, $request_user, $school_id, 'delete', 'Paper', $paper['id']);
+        qg_log_audit($con, $session_uid, $school_id, 'delete', 'Paper', $paper['id']);
 
         http_response_code(200);
         echo json_encode([
@@ -72,4 +76,3 @@ try {
         'error_detail' => $e->getMessage()
     ]);
 }
-?>

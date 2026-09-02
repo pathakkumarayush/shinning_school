@@ -213,11 +213,13 @@ function qg_get_subjects($con, $class_id, $school, $session) {
         mysqli_stmt_close($stmt1);
 
         if ($class_row) {
-            $class_name = $class_row['class'];
+            $class_name = trim($class_row['class']);
             // 2. Fetch subjects matching this class name
-            $stmt2 = mysqli_prepare($con, "SELECT DISTINCT subj_id AS subject_id, name AS subject_name FROM subjects WHERE class = ? AND school = ? AND session = ? ORDER BY name ASC");
+            $stmt2 = mysqli_prepare($con, "SELECT DISTINCT subj_id AS subject_id, name AS subject_name FROM subjects WHERE (class = ? OR class = ?) AND school = ? AND (session = ? OR session = '' OR session IS NULL) ORDER BY name ASC");
             if ($stmt2) {
-                mysqli_stmt_bind_param($stmt2, "sss", $class_name, $school, $session);
+                // If class_name has section like 'NURSERY A', base is 'NURSERY'
+                $base_class = trim(preg_replace('/\s+[A-Z]$/i', '', $class_name));
+                mysqli_stmt_bind_param($stmt2, "ssss", $class_name, $base_class, $school, $session);
                 mysqli_stmt_execute($stmt2);
                 $res2 = mysqli_stmt_get_result($stmt2);
                 while ($row = mysqli_fetch_assoc($res2)) {

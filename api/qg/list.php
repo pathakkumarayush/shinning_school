@@ -7,6 +7,7 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . '/../../db.php';
 require_once __DIR__ . '/../../school/qg/db_helpers.php';
+require_once __DIR__ . '/auth_helper.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     http_response_code(405);
@@ -14,13 +15,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     exit;
 }
 
+// Authenticate via token
+$auth = qg_authenticate($con, true);
+$session_uid = $auth['uid'];
+$is_admin = $auth['is_admin'];
+
 $session = isset($_GET['session']) ? trim($_GET['session']) : '';
 $school_id = 'shining';
 
 $filter_class = isset($_GET['class_id']) && $_GET['class_id'] !== '' ? intval($_GET['class_id']) : -1;
 $filter_subject = isset($_GET['subject_id']) && $_GET['subject_id'] !== '' ? intval($_GET['subject_id']) : -1;
 $filter_status = isset($_GET['status']) ? trim($_GET['status']) : '';
-$filter_user = isset($_GET['create_by']) ? trim($_GET['create_by']) : (isset($_GET['user_id']) ? trim($_GET['user_id']) : '');
 
 try {
     $sql = "SELECT p.id, p.uuid, p.title, p.exam_name, p.class_id, p.paper_class_name, p.subject_id, p.academic_year, 
@@ -41,14 +46,19 @@ try {
         $params[] = $session;
     }
 
-    // Role / User filtering
-    if (!empty($filter_user)) {
-        $is_admin_user = (strtolower($filter_user) === 'admin' || strtolower($filter_user) === 'shining');
-        if (!$is_admin_user) {
-            $sql .= " AND p.created_by = ?";
-            $types .= "s";
-            $params[] = $filter_user;
-        }
+    // Role-based filtering: Non-admin users can only view their own papers
+    if (!$is_admin) {
+        $sql .= " AND p.created_by = ?";
+        $types .= "s";
+        $params[] = $session_uid;
+    } elseif (!empty($_GET['create_by'])) {
+        $sql .= " AND p.created_by = ?";
+        $types .= "s";
+        $params[] = trim($_GET['create_by']);
+    } elseif (!empty($_GET['user_id'])) {
+        $sql .= " AND p.created_by = ?";
+        $types .= "s";
+        $params[] = trim($_GET['user_id']);
     }
 
     if ($filter_class >= 0) {
@@ -101,4 +111,3 @@ try {
         'error_detail' => $e->getMessage()
     ]);
 }
-?>

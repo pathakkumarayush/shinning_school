@@ -1,11 +1,9 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+ini_set('display_errors', 0);
 header('Content-Type: application/json');
 date_default_timezone_set('Asia/Kolkata');
 
-require '../db.php'; // adjust your path
+require_once __DIR__ . '/../db.php';
 
 // Validate required params
 if (!isset($_GET['session']) || empty($_GET['session'])) {
@@ -23,7 +21,7 @@ $examination = mysqli_real_escape_string($con, $_GET['examination']);
 $class = isset($_GET['class']) ? mysqli_real_escape_string($con, $_GET['class']) : null;
 
 // Build query
-$query = "SELECT exam_id, examination, session, class, subject, sdate, marks, school
+$query = "SELECT exam_id, examination, session, class, subject, sdate, edate, marks, min_marks, school
           FROM exam
           WHERE session = '$session' AND examination = '$examination'";
 

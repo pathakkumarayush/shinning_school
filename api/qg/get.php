@@ -7,12 +7,18 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . '/../../db.php';
 require_once __DIR__ . '/../../school/qg/db_helpers.php';
+require_once __DIR__ . '/auth_helper.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     http_response_code(405);
     echo json_encode(['status' => false, 'message' => 'Only GET method is allowed']);
     exit;
 }
+
+// Authenticate via token
+$auth = qg_authenticate($con, true);
+$session_uid = $auth['uid'];
+$is_admin = $auth['is_admin'];
 
 $uuid = isset($_GET['uuid']) ? trim($_GET['uuid']) : '';
 if (empty($uuid)) {
@@ -28,6 +34,13 @@ try {
     if (!$paper) {
         http_response_code(404);
         echo json_encode(['status' => false, 'message' => 'Question paper not found']);
+        exit;
+    }
+
+    // Role check: Non-admin can only access own papers
+    if (!$is_admin && strtolower($paper['created_by']) !== strtolower($session_uid)) {
+        http_response_code(403);
+        echo json_encode(['status' => false, 'message' => 'Access denied: You do not have permission to view this question paper']);
         exit;
     }
 
@@ -109,4 +122,3 @@ try {
         'error_detail' => $e->getMessage()
     ]);
 }
-?>

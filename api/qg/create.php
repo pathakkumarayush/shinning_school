@@ -7,12 +7,18 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . '/../../db.php';
 require_once __DIR__ . '/../../school/qg/db_helpers.php';
+require_once __DIR__ . '/auth_helper.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['status' => false, 'message' => 'Only POST method is allowed']);
     exit;
 }
+
+// Authenticate via token
+$auth = qg_authenticate($con, true);
+$session_uid = $auth['uid'];
+$is_admin = $auth['is_admin'];
 
 // Decode JSON input
 $input = file_get_contents("php://input");
@@ -27,7 +33,7 @@ $school_id = 'shining';
 $default_settings = qg_get_paper_settings($con, $school_id);
 
 // Retrieve inputs
-$session = isset($data['session']) ? trim($data['session']) : ($data['academic_year'] ?? '2026-2027');
+$session = isset($data['session']) && !empty(trim($data['session'])) ? trim($data['session']) : (isset($data['academic_year']) && !empty(trim($data['academic_year'])) ? trim($data['academic_year']) : '2026-2027');
 $exam_name = isset($data['exam_name']) ? trim($data['exam_name']) : '';
 $title = isset($data['title']) && !empty(trim($data['title'])) ? trim($data['title']) : $exam_name;
 $class_id = isset($data['class_id']) && $data['class_id'] !== '' ? intval($data['class_id']) : -1;
@@ -38,8 +44,13 @@ $max_marks = isset($data['max_marks']) ? floatval($data['max_marks']) : 0;
 $instructions = isset($data['instructions']) ? trim($data['instructions']) : $default_settings['general_instruction'];
 $watermark = isset($data['watermark_text']) ? trim($data['watermark_text']) : $default_settings['watermark'];
 
-// Determine creator: accept `create_by` or `user_id` from payload or token
-$create_by = isset($data['create_by']) ? trim($data['create_by']) : (isset($data['user_id']) ? trim($data['user_id']) : (isset($session_uid) ? $session_uid : ''));
+// Determine creator: token's authenticated user or admin override
+$create_by = $session_uid;
+if ($is_admin && !empty($data['create_by'])) {
+    $create_by = trim($data['create_by']);
+} elseif ($is_admin && !empty($data['user_id'])) {
+    $create_by = trim($data['user_id']);
+}
 
 // Validation
 $errors = [];
@@ -47,7 +58,7 @@ if (empty($exam_name)) $errors[] = "Exam Name is required.";
 if ($class_id < 0) $errors[] = "Please select target Class.";
 if ($subject_id < 0) $errors[] = "Please select Subject.";
 if ($duration <= 0) $errors[] = "Duration must be greater than 0 minutes.";
-if (empty($create_by)) $errors[] = "Creator ID (create_by or user_id) is required.";
+if (empty($create_by)) $errors[] = "Creator ID is required.";
 
 // Support structured `sections` payload OR backward-compatible flat `questions`
 $sections_payload = isset($data['sections']) ? $data['sections'] : [];
@@ -82,7 +93,7 @@ try {
     // 1. Insert Paper Record
     $new_uuid = qg_uuidv4();
     $stmt = mysqli_prepare($con, "INSERT INTO qg_papers(uuid, title, exam_name, class_id, paper_class_name, subject_id, academic_year, duration_minutes, max_marks, instructions, watermark_text, show_qr_code, show_page_number, status, created_by, school) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 1, 'draft', ?, ?)");
-    mysqli_stmt_bind_param($stmt, "sssisidssssss", $new_uuid, $title, $exam_name, $class_id, $paper_class_name, $subject_id, $session, $duration, $max_marks, $instructions, $watermark, $create_by, $school_id);
+    mysqli_stmt_bind_param($stmt, "sssisisdsssss", $new_uuid, $title, $exam_name, $class_id, $paper_class_name, $subject_id, $session, $duration, $max_marks, $instructions, $watermark, $create_by, $school_id);
     mysqli_stmt_execute($stmt);
     $paper_id = mysqli_insert_id($con);
     mysqli_stmt_close($stmt);
@@ -164,7 +175,8 @@ try {
         'message' => 'Section-based question paper created successfully',
         'data' => [
             'paper_id' => $paper_id,
-            'uuid' => $new_uuid
+            'uuid' => $new_uuid,
+            'academic_year' => $session
         ]
     ]);
 } catch (Exception $e) {
@@ -176,4 +188,3 @@ try {
         'error_detail' => $e->getMessage()
     ]);
 }
-?>

@@ -1,6 +1,5 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+ini_set('display_errors', 0);
 error_reporting(E_ALL);
 date_default_timezone_set('Asia/Kolkata');
 header('Content-Type: application/json');
@@ -68,31 +67,67 @@ if ($ac_no === '') {
 }
 $ac_no_esc = mysqli_real_escape_string($con, $ac_no);
 
-// Insert into privious_fee
-$query = "INSERT INTO privious_fee (cid, sid, amt, session, rmk, ac_no, status) 
-          VALUES ('$class_esc', '$student_id_esc', '$amount_esc', '$session_esc', '$remark_esc', '$ac_no_esc', '1')";
+// Check if previous fee record already exists for this student in this session
+$check_q = mysqli_query($con, "SELECT id FROM privious_fee WHERE sid = '$student_id_esc' AND session = '$session_esc' LIMIT 1");
 
-if (mysqli_query($con, $query)) {
-    $insert_id = mysqli_insert_id($con);
-    http_response_code(200);
-    echo json_encode([
-        'status' => true,
-        'message' => 'Previous fee added successfully',
-        'data' => [
-            'id'         => $insert_id,
-            'session'    => $session,
-            'class'      => $class,
-            'student_id' => $student_id,
-            'amount'     => $amount_esc,
-            'remark'     => $remark,
-            'ac_no'      => $ac_no
-        ]
-    ]);
+if ($check_q && mysqli_num_rows($check_q) > 0) {
+    $existing = mysqli_fetch_assoc($check_q);
+    $fee_id = (int)$existing['id'];
+
+    $update_query = "UPDATE privious_fee 
+                     SET cid = '$class_esc', amt = '$amount_esc', rmk = '$remark_esc', ac_no = '$ac_no_esc', status = '1'
+                     WHERE id = $fee_id";
+
+    if (mysqli_query($con, $update_query)) {
+        http_response_code(200);
+        echo json_encode([
+            'status' => true,
+            'message' => 'Previous fee updated successfully',
+            'data' => [
+                'id'         => $fee_id,
+                'session'    => $session,
+                'class'      => $class,
+                'student_id' => $student_id,
+                'amount'     => $amount_esc,
+                'remark'     => $remark,
+                'ac_no'      => $ac_no,
+                'action'     => 'updated'
+            ]
+        ]);
+    } else {
+        http_response_code(500);
+        echo json_encode([
+            'status' => false,
+            'message' => 'Database error: ' . mysqli_error($con)
+        ]);
+    }
 } else {
-    http_response_code(500);
-    echo json_encode([
-        'status' => false,
-        'message' => 'Database error: ' . mysqli_error($con)
-    ]);
+    // Insert into privious_fee
+    $query = "INSERT INTO privious_fee (cid, sid, amt, session, rmk, ac_no, status) 
+              VALUES ('$class_esc', '$student_id_esc', '$amount_esc', '$session_esc', '$remark_esc', '$ac_no_esc', '1')";
+
+    if (mysqli_query($con, $query)) {
+        $insert_id = mysqli_insert_id($con);
+        http_response_code(200);
+        echo json_encode([
+            'status' => true,
+            'message' => 'Previous fee added successfully',
+            'data' => [
+                'id'         => $insert_id,
+                'session'    => $session,
+                'class'      => $class,
+                'student_id' => $student_id,
+                'amount'     => $amount_esc,
+                'remark'     => $remark,
+                'ac_no'      => $ac_no,
+                'action'     => 'created'
+            ]
+        ]);
+    } else {
+        http_response_code(500);
+        echo json_encode([
+            'status' => false,
+            'message' => 'Database error: ' . mysqli_error($con)
+        ]);
+    }
 }
-?>
