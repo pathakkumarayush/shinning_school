@@ -1,0 +1,519 @@
+{
+	"info": {
+		"_postman_id": "9a12c45e-b8d2-4e2a-8ef0-9118c7e99999",
+		"name": "Shining School ERP - Enhanced APIs & Copy Collection",
+		"description": "Complete Postman Collection covering all enhanced and new backend APIs for Shining School ERP (Teacher API, Syllabus RBAC, Student Reports & Search, Student Documents, Admission, Student Full Details Update, Copy Collection CRUD & Copy View Report).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost/shining_school/api",
+			"type": "string"
+		},
+		{
+			"key": "session",
+			"value": "2026-2027",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Teacher Module",
+			"item": [
+				{
+					"name": "Get Teachers (with ID, Login UID & Password)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/get_teacher.php?session={{session}}",
+							"host": ["{{base_url}}"],
+							"path": ["get_teacher.php"],
+							"query": [
+								{ "key": "session", "value": "{{session}}" },
+								{ "key": "id", "value": "", "disabled": true },
+								{ "key": "teacher_id", "value": "", "disabled": true },
+								{ "key": "status", "value": "1", "disabled": true }
+							]
+						},
+						"description": "Fetches all teachers including database primary `id` (int), `teacher_id` (int), `login_uid` (`login.uid`), `login_password` (`login.pass`), and `teacher_type`."
+					}
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/get_profile.php?user_id=techshining23&session={{session}}",
+							"host": ["{{base_url}}"],
+							"path": ["get_profile.php"],
+							"query": [
+								{ "key": "user_id", "value": "techshining23" },
+								{ "key": "session", "value": "{{session}}" }
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Syllabus Module (Role-Based Access Control)",
+			"item": [
+				{
+					"name": "Store Syllabus (Subject Teacher / Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"techshining23\",\n  \"class\": \"I A\",\n  \"subject\": \"EVS\",\n  \"session\": \"{{session}}\",\n  \"description\": \"Term 1 Environmental Studies\",\n  \"remark\": \"Monthly milestone\",\n  \"chapters\": [\n    {\n      \"chapter_no\": \"1\",\n      \"chapter_name\": \"My Family\",\n      \"topics\": [\"Parents\", \"Siblings\"]\n    },\n    {\n      \"chapter_no\": \"2\",\n      \"chapter_name\": \"Our Neighborhood\",\n      \"topics\": [\"School\", \"Hospital\", \"Park\"]\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/syllabus/store_syllabus.php",
+							"host": ["{{base_url}}"],
+							"path": ["syllabus", "store_syllabus.php"]
+						},
+						"description": "Enforces assignment check against `class_teacher_sub` for Subject Teachers (denies unassigned classes/subjects with HTTP 403). Admins have full access."
+					}
+				},
+				{
+					"name": "Get Syllabus - Subject Teacher (Own Syllabus Only)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/syllabus/get_syllabus.php?user_id=techshining23&role=subject_teacher&session={{session}}",
+							"host": ["{{base_url}}"],
+							"path": ["syllabus", "get_syllabus.php"],
+							"query": [
+								{ "key": "user_id", "value": "techshining23" },
+								{ "key": "role", "value": "subject_teacher" },
+								{ "key": "session", "value": "{{session}}" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Syllabus - Class Teacher (All Subjects for Assigned Class)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/syllabus/get_syllabus.php?user_id=techshining23&role=class_teacher&session={{session}}",
+							"host": ["{{base_url}}"],
+							"path": ["syllabus", "get_syllabus.php"],
+							"query": [
+								{ "key": "user_id", "value": "techshining23" },
+								{ "key": "role", "value": "class_teacher" },
+								{ "key": "session", "value": "{{session}}" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Syllabus - Admin (Class-wise & Filtered)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/syllabus/get_syllabus.php?user_id=admin&class=I A&session={{session}}",
+							"host": ["{{base_url}}"],
+							"path": ["syllabus", "get_syllabus.php"],
+							"query": [
+								{ "key": "user_id", "value": "admin" },
+								{ "key": "class", "value": "I A" },
+								{ "key": "subject", "value": "EVS", "disabled": true },
+								{ "key": "teacher", "value": "techshining23", "disabled": true },
+								{ "key": "session", "value": "{{session}}" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Syllabus",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"user_id\": \"techshining23\",\n  \"description\": \"Updated Term 1 Syllabus\",\n  \"remark\": \"Revised\",\n  \"chapters\": [\n    {\n      \"chapter_no\": \"1\",\n      \"chapter_name\": \"My Family (Revised)\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/syllabus/update_syllabus.php",
+							"host": ["{{base_url}}"],
+							"path": ["syllabus", "update_syllabus.php"]
+						}
+					}
+				},
+				{
+					"name": "Delete Syllabus",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1,\n  \"user_id\": \"techshining23\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/syllabus/delete_syllabus.php",
+							"host": ["{{base_url}}"],
+							"path": ["syllabus", "delete_syllabus.php"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Student Reports & Search Module",
+			"item": [
+				{
+					"name": "Search Students (Multi-field: Name, Mobile, Scholar, Roll)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/get_student.php?session={{session}}&search=PRAJAPATI",
+							"host": ["{{base_url}}"],
+							"path": ["get_student.php"],
+							"query": [
+								{ "key": "session", "value": "{{session}}" },
+								{ "key": "search", "value": "PRAJAPATI" }
+							]
+						},
+						"description": "Searches simultaneously across Student Name, Father Name, Contact Mobile, Scholar No, and Admission/Roll No."
+					}
+				},
+				{
+					"name": "Search by Scholar No",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/get_student.php?session={{session}}&scholar_no=4010",
+							"host": ["{{base_url}}"],
+							"path": ["get_student.php"],
+							"query": [
+								{ "key": "session", "value": "{{session}}" },
+								{ "key": "scholar_no", "value": "4010" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Age Wise Report Filter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/get_student.php?session={{session}}&min_age=5&max_age=12",
+							"host": ["{{base_url}}"],
+							"path": ["get_student.php"],
+							"query": [
+								{ "key": "session", "value": "{{session}}" },
+								{ "key": "min_age", "value": "5" },
+								{ "key": "max_age", "value": "12" },
+								{ "key": "age", "value": "8", "disabled": true }
+							]
+						},
+						"description": "Dynamically calculates age from `student_dob` and returns exact integer `age` in response."
+					}
+				},
+				{
+					"name": "Address & City Wise Filter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/get_student.php?session={{session}}&city=RAISEN",
+							"host": ["{{base_url}}"],
+							"path": ["get_student.php"],
+							"query": [
+								{ "key": "session", "value": "{{session}}" },
+								{ "key": "address", "value": "Raisen", "disabled": true },
+								{ "key": "city", "value": "RAISEN" },
+								{ "key": "pincode", "value": "464001", "disabled": true }
+							]
+						}
+					}
+				},
+				{
+					"name": "Gender Wise Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/get_student.php?session={{session}}&gender=female",
+							"host": ["{{base_url}}"],
+							"path": ["get_student.php"],
+							"query": [
+								{ "key": "session", "value": "{{session}}" },
+								{ "key": "gender", "value": "female" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Category & RTE Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/get_student.php?session={{session}}&category=OBC",
+							"host": ["{{base_url}}"],
+							"path": ["get_student.php"],
+							"query": [
+								{ "key": "session", "value": "{{session}}" },
+								{ "key": "category", "value": "OBC" },
+								{ "key": "rte", "value": "1", "disabled": true }
+							]
+						}
+					}
+				},
+				{
+					"name": "New Student Filter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/get_student.php?session={{session}}&new_student=1",
+							"host": ["{{base_url}}"],
+							"path": ["get_student.php"],
+							"query": [
+								{ "key": "session", "value": "{{session}}" },
+								{ "key": "new_student", "value": "1" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Summary / Grouped Counts Mode",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/get_student.php?session={{session}}&group_by=caste&count_only=1",
+							"host": ["{{base_url}}"],
+							"path": ["get_student.php"],
+							"query": [
+								{ "key": "session", "value": "{{session}}" },
+								{ "key": "group_by", "value": "caste" },
+								{ "key": "count_only", "value": "1" }
+							]
+						},
+						"description": "`group_by` supports: `gender`, `caste`/`category`, `class`, `age`."
+					}
+				}
+			]
+		},
+		{
+			"name": "4. Student Document Module",
+			"item": [
+				{
+					"name": "Get Student Documents (with Scholar No)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/get_student_documents.php?student_id=1314&session={{session}}",
+							"host": ["{{base_url}}"],
+							"path": ["get_student_documents.php"],
+							"query": [
+								{ "key": "student_id", "value": "1314" },
+								{ "key": "session", "value": "{{session}}" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Class Student Documents",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/class_student_documents.php?class=I A&session={{session}}",
+							"host": ["{{base_url}}"],
+							"path": ["class_student_documents.php"],
+							"query": [
+								{ "key": "class", "value": "I A" },
+								{ "key": "session", "value": "{{session}}" }
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "5. Student Admission Module",
+			"item": [
+				{
+					"name": "Admit New Student (Full ERP Fields)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"admin\",\n  \"student_name\": \"Rahul Sharma\",\n  \"scholar_no\": \"SCH-2026-001\",\n  \"student_class\": \"I A\",\n  \"student_section\": \"A\",\n  \"student_session\": \"{{session}}\",\n  \"student_dob\": \"15-08-2018\",\n  \"student_doj\": \"01-04-2026\",\n  \"student_gender\": \"male\",\n  \"student_fname\": \"Sanjay Sharma\",\n  \"m_name\": \"Pooja Sharma\",\n  \"student_contactno\": \"9876543210\",\n  \"alt_no\": \"9123456780\",\n  \"caste\": \"OBC\",\n  \"caste_no\": \"CST9988\",\n  \"student_address\": \"123 Model Town, Raisen\",\n  \"home_town\": \"Raisen\",\n  \"pn\": \"464001\",\n  \"apaar\": \"APAAR998877\",\n  \"pen\": \"PEN11223344\",\n  \"family_id\": \"FAM887766\",\n  \"bank_name\": \"State Bank of India\",\n  \"acc_holder\": \"Sanjay Sharma\",\n  \"fid\": \"SBIN0001234\",\n  \"income\": \"180000\",\n  \"school_type\": \"Day Scholar\",\n  \"rti\": \"No\",\n  \"addmisionfee\": \"Yes\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/store_admission.php",
+							"host": ["{{base_url}}"],
+							"path": ["store_admission.php"]
+						},
+						"description": "Supports full ERP admission columns, creates sequential student_id, standard UID (`smrt<school><id>`), and validates Class Teacher role."
+					}
+				}
+			]
+		},
+		{
+			"name": "6. Student Details Update Module",
+			"item": [
+				{
+					"name": "Update Student Full Details (Admin / Assigned Class Teacher)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"user_id\": \"admin\",\n  \"student_id\": \"1314\",\n  \"session\": \"{{session}}\",\n  \"student_address\": \"Updated Residential Address, Raisen\",\n  \"student_contactno\": \"9876500000\",\n  \"apaar\": \"APAAR_UPDATED_123\",\n  \"pen\": \"PEN_UPDATED_123\",\n  \"family_id\": \"FAM_UPDATED_123\",\n  \"bank_name\": \"HDFC Bank\",\n  \"income\": \"200000\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/student_update.php",
+							"host": ["{{base_url}}"],
+							"path": ["student_update.php"]
+						},
+						"description": "Accepts user_id / token. Class Teachers can only update students belonging to their assigned class (`class_teacher` table). Unauthorized updates return HTTP 403 Forbidden."
+					}
+				}
+			]
+		},
+		{
+			"name": "7. Copy Collection Module (CRUD + Copy View Report)",
+			"item": [
+				{
+					"name": "Store / Bulk Copy Collection",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"class\": \"I A\",\n  \"exam\": \"JULY TEST\",\n  \"subject\": \"English\",\n  \"session\": \"{{session}}\",\n  \"date\": \"06-08-2026\",\n  \"attendance\": {\n    \"1706\": \"absent\",\n    \"1561\": \"absent\",\n    \"1447\": \"present\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/copy_collection/store_copy_collection.php",
+							"host": ["{{base_url}}"],
+							"path": ["copy_collection", "store_copy_collection.php"]
+						},
+						"description": "Records student copy submission. Absent copies are stored in `exam_copy_collection`. Present copies clear any absent entries."
+					}
+				},
+				{
+					"name": "Get Copy Collection Records (List & Filter)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/copy_collection/get_copy_collection.php?class=I A&exam=JULY TEST&subject=English&session={{session}}",
+							"host": ["{{base_url}}"],
+							"path": ["copy_collection", "get_copy_collection.php"],
+							"query": [
+								{ "key": "class", "value": "I A" },
+								{ "key": "exam", "value": "JULY TEST" },
+								{ "key": "subject", "value": "English" },
+								{ "key": "session", "value": "{{session}}" },
+								{ "key": "student_id", "value": "", "disabled": true },
+								{ "key": "date", "value": "", "disabled": true }
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Copy Collection Record",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 185,\n  \"status\": \"absent\",\n  \"rmk\": \"Sick on exam date\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/copy_collection/update_copy_collection.php",
+							"host": ["{{base_url}}"],
+							"path": ["copy_collection", "update_copy_collection.php"]
+						}
+					}
+				},
+				{
+					"name": "Copy View Report (Summary & Student Statuses)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/copy_collection/copy_view_report.php?class=I A&exam=JULY TEST&subject=English&session={{session}}",
+							"host": ["{{base_url}}"],
+							"path": ["copy_collection", "copy_view_report.php"],
+							"query": [
+								{ "key": "class", "value": "I A" },
+								{ "key": "exam", "value": "JULY TEST" },
+								{ "key": "subject", "value": "English" },
+								{ "key": "session", "value": "{{session}}" }
+							]
+						},
+						"description": "Matches `school/copy_view.php` and `print_copy_view.php`. Returns `total_students`, `total_collected_copies`, `total_absent_copies`, `collection_percentage` and complete student table with Present/Absent statuses."
+					}
+				},
+				{
+					"name": "Delete Copy Collection Record",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 185\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/copy_collection/delete_copy_collection.php",
+							"host": ["{{base_url}}"],
+							"path": ["copy_collection", "delete_copy_collection.php"]
+						}
+					}
+				},
+				{
+					"name": "Bulk Clear Copy Collection Records",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"class\": \"I A\",\n  \"exam\": \"JULY TEST\",\n  \"subject\": \"English\",\n  \"session\": \"{{session}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/copy_collection/delete_copy_collection.php",
+							"host": ["{{base_url}}"],
+							"path": ["copy_collection", "delete_copy_collection.php"]
+						}
+					}
+				}
+			]
+		}
+	]
+}

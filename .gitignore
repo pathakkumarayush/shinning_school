@@ -1,0 +1,10 @@
+# Database configuration
+db.php
+*/db.php
+
+# School specific files
+school/index.php
+school/uploads/
+school/uploads
+school/upload/
+school/upload

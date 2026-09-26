@@ -1,0 +1,755 @@
+<?php
+ini_set('display_errors', 1); ini_set('display_startup_errors', 1); error_reporting(E_ALL);
+session_start();
+require_once("../db.php"); 
+require_once("words.php");
+?>
+<script type="text/javascript">
+    function printpage() {
+        //Get the print button and put it into a variable
+        var printButton = document.getElementById("printpagebutton");
+        //Set the print button visibility to 'hidden' 
+        printButton.style.visibility = 'hidden';
+        //Print the page content
+        window.print()
+        //Set the print button to 'visible' again 
+        //[Delete this line if you want it to stay hidden after printing]
+        printButton.style.visibility = 'visible';
+    }
+</script>
+<style>
+.tbl{ width:150px;font-size:21px!important;}
+.tb2{ width:90px;font-size:21px!important;}
+.sn{width:168px!important;font-size:21px!important;color:#0033FF;}
+.sn1{width:138px!important;font-size:21px!important;}
+.sn2{width:150px!important;font-size:21px!important;color:#0033FF;}
+.tbl tr{line-height:27px!important;}
+.tbl1 tr{line-height:27px!important;}
+.fsz{font-size:21px!important;}
+.mtr{font-size:19px!important;}
+
+.wt{
+  content: ' ';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background:  url(wr.png);
+  background-position: center;  
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  z-index: -1;
+  opacity: 0.2;
+}
+
+</style>
+<?php
+$term=$_GET['exam'];
+$ses=$_GET['ses'];
+$i=1;
+$search=mysqli_query($con,"select * from student where student_class='".$_GET['class']."' and student_session='$ses' and status='0' order by student_name Asc");
+while($rowstud=mysqli_fetch_array($search))
+{
+$uid=$rowstud['uid'];
+$sid=$rowstud['student_id'];
+$clstech=mysqli_query($con,"select * from class_teacher where class='".$rowstud['student_class']."' and teacher_session='$ses'");
+$rowcls=mysqli_fetch_array($clstech);
+
+$clsth=mysqli_query($con,"select * from teacher where uid='".$rowcls['teacher']."'");
+$rowcls=mysqli_fetch_array($clsth);
+
+$rno=mysqli_query($con,"select * from roll_no where sid='$sid' and ses='$ses'");
+$rowno=mysqli_fetch_array($rno);
+?>	
+
+<div style="width:1060px;height:1550px;font-family:Calisto MT;background:url(BK_1.png);background-repeat:no-repeat;background-position:center; background-position:center;" class="fsz">
+<br clear="all" />
+<div style="width:100%; margin:0 auto; height:300PX;margin-top:0px;">
+<br clear="all" />
+</div>
+<br clear="all" />
+<div style="width:100%;height:auto;">
+<div style="width:99%;height:235px;text-transform: capitalize;">
+<table style="width:991px;font-size:21px;margin-left:35px; font-size:21px; margin-top:-10PX; font-weight:bold;color:#000000; border:1px #000000 solid;" border="1"  cellpadding="0" cellspacing="0" class="tbl1">
+<tr><td style="width:180px; font-weight:normal;">&nbsp;Roll Number</td>
+<td style="width:150px; color:#CC0000;">&nbsp;<?php echo ucwords($rowstud['rno']); ?></td>
+<td style="width:200px;font-weight:normal;">&nbsp;Scholar Number</td>
+<td style="width:275px;color:#CC0000;">&nbsp;<?php echo ucwords($rowstud['student_scholar']); ?></td>
+<td colspan="2" rowspan="7">
+<img src="upload/<?php echo $rowstud["student_img"]; ?>" style="border-radius:5px; width:160px; margin-left:14PX; height:190px;">
+</td>
+</tr>
+
+<tr><td style="font-weight:normal;">&nbsp;Student's Name</td><td colspan="3">&nbsp;<?php echo ucwords($rowstud['student_name']); ?></td></tr>
+<tr><td style="font-weight:normal;">&nbsp;Father's Name</td><td colspan="3">&nbsp;<?php echo ucwords($rowstud['student_fname']); ?></td></tr>
+<tr><td style="font-weight:normal;">&nbsp;Mother's Name</td><td colspan="3">&nbsp;<?php echo ucwords($rowstud['m_name']); ?></td></tr>
+
+<tr><td style="width:180px; font-weight:normal;">&nbsp;Date Of Birth</td>
+<td>&nbsp;<?php echo $dob = $rowstud['student_dob']; ?></td>
+<td style="width:200px;font-weight:normal;" colspan="2">
+&nbsp;<?php
+if(!empty($rowstud['student_dob']))
+{
+?>
+<?php 
+$mydate = strtotime($rowstud['student_dob']);
+$dob = date('d', strtotime($rowstud['student_dob'])); 
+$ya = date('Y', strtotime($rowstud['student_dob'])); 
+echo convert_digit_to_words($dob); ?>
+<?php echo date('F', $mydate); ?>
+
+<?php echo convert_digit_to_words($ya); ?>
+ <?php }?>
+</td>
+</tr>
+
+
+<tr><td style="font-weight:normal;">&nbsp;Class</td>
+<td>&nbsp;
+<?php 
+//echo $rowstud['student_class']; 
+if($rowstud['student_class']=='I' || $rowstud['student_class']=='I A' || $rowstud['student_class']=='I B')
+{
+$clls = 'I';
+}
+else if($rowstud['student_class']=='II' || $rowstud['student_class']=='II A' || $rowstud['student_class']=='II B')
+{
+$clls = 'II';
+}
+else
+{
+$clls = '-';
+}
+echo $clls;
+?>
+</td>
+<td style="font-weight:normal;">&nbsp;Section</td>
+<td>&nbsp;
+<?php 
+if($rowstud['student_class']=='I')
+{
+$sec = '-';
+}
+else if($rowstud['student_class']=='I A')
+{
+$sec = 'A';
+}
+else if($rowstud['student_class']=='I B')
+{
+$sec = 'B';
+}
+else if($rowstud['student_class']=='II')
+{
+$sec = '-';
+}
+else if($rowstud['student_class']=='II A')
+{
+$sec = 'A';
+}
+else if($rowstud['student_class']=='II B')
+{
+$sec = 'B';
+}
+else
+{
+$sec = '-';
+}
+echo $sec;
+?>
+</td>
+</tr>
+
+<tr><td style="font-weight:normal;">&nbsp;Gender</td>
+<td>&nbsp;<?php echo $rowstud['student_gender']; ?></td>
+<td style="font-weight:normal;">&nbsp;Category</td>
+<td>&nbsp;<?php echo $rowstud['caste']; ?></td>
+</tr>
+
+<tr><td style="font-weight:normal;">&nbsp;Samagra ID </td>
+<td>&nbsp;<?php echo $rowstud['religion']; ?></td>
+<td style="font-weight:normal;">&nbsp;Aadhaar Number</td>
+<td>&nbsp;<?php echo $rowstud['student_rollno']; ?></td>
+<td style="font-weight:normal;">&nbsp;Medium</td>
+<td>&nbsp;ENGLISH</td>
+</tr>
+</table>
+</div>
+<br clear="all" />
+</div>
+<br clear="all" />
+<div style="width:93%; margin:0 auto; line-height:28px;margin-top:-30px; border-top:2px #000000 solid;border-bottom:2px #000000 solid;">
+<span style="color:#2d3b87; font-size:22px;font-family:Calisto MT; font-weight:bold; margin-left:25PX;">
+<img src="arr.png" />&nbsp;Educational Performance as Follows : </span>
+</div>
+<br clear="all" />
+<div style="width:100%;height:auto;">
+<div>
+<?php
+$heng=mysqli_query($con,"select subject,obtainmarks,totalmarks from marks where student='$uid' and exam='SECOND TERMINAL' and subject='English' and ses='$ses'") 
+or die(mysqli_error());
+$rowheng=mysqli_fetch_array($heng);
+$heng_m40 = round($rowheng['obtainmarks']*40/60);
+
+$aeng=mysqli_query($con,"select subject,obtainmarks,totalmarks from marks where student='$uid' and exam='ANNUAL EXAM' and subject='English' and ses='$ses'") 
+or die(mysqli_error());
+$rowaeng=mysqli_fetch_array($aeng);
+$aeng_m60 = $rowaeng['obtainmarks'];
+
+$english = $heng_m40+$aeng_m60;
+?>
+<!--hindi marking start-->
+<?php
+$hhindi=mysqli_query($con,"select subject,obtainmarks,totalmarks from marks where student='$uid' and exam='SECOND TERMINAL' and subject='Hindi' and ses='$ses'") 
+or die(mysqli_error());
+$rowhhindi=mysqli_fetch_array($hhindi);
+$hhindi_m40 = round($rowhhindi['obtainmarks']*40/60);
+
+$ahindi=mysqli_query($con,"select subject,obtainmarks,totalmarks from marks where student='$uid' and exam='ANNUAL EXAM' and subject='Hindi' and ses='$ses'") 
+or die(mysqli_error());
+$rowahindi=mysqli_fetch_array($ahindi);
+$ahindi_m60 = $rowahindi['obtainmarks'];
+
+$hindi = $hhindi_m40+$ahindi_m60;
+?>
+
+<!--Sanskrit marking start-->
+
+<!--Maths marking start-->
+<?php
+$hmath=mysqli_query($con,"select subject,obtainmarks,totalmarks from marks where student='$uid' and exam='SECOND TERMINAL' and subject='Mathematics' and ses='$ses'") 
+or die(mysqli_error());
+$rowhmath=mysqli_fetch_array($hmath);
+$hmath_m40 = round($rowhmath['obtainmarks']*40/60);
+
+$amath=mysqli_query($con,"select subject,obtainmarks,totalmarks from marks where student='$uid' and exam='ANNUAL EXAM' and subject='Mathematics' and ses='$ses'") 
+or die(mysqli_error());
+$rowamath=mysqli_fetch_array($amath);
+$amath_m60 = $rowamath['obtainmarks'];
+
+$math = $hmath_m40+$amath_m60;
+?>
+
+<!--Science marking start-->
+<?php
+$hsc=mysqli_query($con,"select subject,obtainmarks,totalmarks from marks where student='$uid' and exam='SECOND TERMINAL' and subject='EVS' and ses='$ses'") 
+or die(mysqli_error());
+$rowhsc=mysqli_fetch_array($hsc);
+$hsc_m40 = round($rowhsc['obtainmarks']*40/60);
+
+$asc=mysqli_query($con,"select subject,obtainmarks,totalmarks from marks where student='$uid' and exam='ANNUAL EXAM' and subject='EVS' and ses='$ses'") 
+or die(mysqli_error());
+$rowasc=mysqli_fetch_array($asc);
+$asc_m60 = $rowasc['obtainmarks'];
+
+$science = $hsc_m40+$asc_m60;
+?>
+
+<!--Social Science marking start-->
+<?php
+$hss=mysqli_query($con,"select subject,obtainmarks,totalmarks from marks where student='$uid' and exam='SECOND TERMINAL' and subject='DRAWING' and ses='$ses'") 
+or die(mysqli_error());
+$rowhss=mysqli_fetch_array($hss);
+$hss_m40 = round($rowhss['obtainmarks']*40/60);
+
+$ass=mysqli_query($con,"select subject,obtainmarks,totalmarks from marks where student='$uid' and exam='ANNUAL EXAM' and subject='DRAWING' and ses='$ses'") 
+or die(mysqli_error());
+$rowass=mysqli_fetch_array($ass);
+$ass_m60 = $rowass['obtainmarks'];
+
+$ss = (float)$hss_m40+(float)$ass_m60;
+?>
+
+<!--GK marking start-->
+<?php
+$hgk=mysqli_query($con,"select subject,obtainmarks,totalmarks from marks where student='$uid' and exam='SECOND TERMINAL' and subject='G.K.' and ses='$ses'") 
+or die(mysqli_error());
+$rowhgk=mysqli_fetch_array($hgk);
+$hgk_m40 = round($rowhgk['obtainmarks']*40/60);
+
+$agk=mysqli_query($con,"select subject,obtainmarks,totalmarks from marks where student='$uid' and exam='ANNUAL EXAM' and subject='G.K.' and ses='$ses'") 
+or die(mysqli_error());
+$rowagk=mysqli_fetch_array($agk);
+$agk_m60 = $rowagk['obtainmarks'];
+
+$gk = (float)$hgk_m40+(float)$agk_m60;
+
+$half = $heng_m40+$hhindi_m40+$hmath_m40;
+$annual = $aeng_m60+$ahindi_m60+$amath_m60;
+
+$annual100 = $english+$hindi+$math;
+
+?>
+<table class="tbl" border="1" cellpadding="0" cellspacing="0" style="color:#000000;border:2px #000000 solid;font-size:21PX; margin-left:35PX; margin-top:-15px; width:991PX;">
+<tr style="font-weight:bold;" align="center">
+<td style="width:200px;border-right:2px #000000 solid;">Subjects</td>
+<td style="width:200px;border-right:2px #000000 solid;">Max.<br />Mark</td>
+<td style="border-right:2px #000000 solid;">Half Yearly Evaluation<br />[40]</td>
+<td style="border-right:2px #000000 solid;">Annual Evaluation<br />[60]</td>
+<td style="" colspan="2">Consolidated Grade<br /><br /></td>
+</tr>
+
+<tr style="line-height:30PX;">
+<td style="border-right:2px #000000 solid;">&nbsp;<img src="ar.png"  style=""/>English</td>
+<td align="center" style="border-right:2px #000000 solid;">100</td>
+<td align="center" style="border-right:2px #000000 solid;"><?php echo $heng_m40;  ?></td>
+<td align="center" style="border-right:2px #000000 solid;"><?php echo $aeng_m60;  ?></td>
+<td align="center" style="border-right:2px #000000 solid;font-weight:bold;color:#2d3b87;"><?php echo $english;  ?></td>
+<td align="center" style="color:#2d3b87;font-weight:bold;">
+                             <?php
+                             if($english > 85)
+                             {
+                             $reseng='A+';
+                             }
+							 if($english > 75 && $english < 86)
+                             {
+                             $reseng= 'A';
+                             }
+							 if($english > 65 && $english < 76)
+                             {
+                             $reseng= 'B+';
+                             }
+							 if($english > 55 && $english < 66)
+                             {
+                             $reseng= 'B';
+                             }
+							 if($english > 50 && $english < 56)
+                             {
+                             $reseng= 'C+';
+                             }
+							 if($english > 45 && $english < 51)
+                             {
+                             $reseng= 'C';
+                             }
+							 if($english > 32 && $english < 46)
+                             {
+                             $reseng= 'D';
+                             }
+							 if($english < 33)
+                             {
+                             $reseng= 'E';
+                             }
+							 echo $reseng;
+?>
+</td>
+</tr>
+
+<tr style="line-height:30PX;">
+<td style="border-right:2px #000000 solid;">&nbsp;<img src="ar.png"  style=""/>Hindi</td>
+<td align="center" style="border-right:2px #000000 solid;">100</td>
+<td align="center" style="border-right:2px #000000 solid;"><?php echo $hhindi_m40; ?></td>
+<td align="center" style="border-right:2px #000000 solid;"><?php echo $ahindi_m60;  ?></td>
+<td align="center" style="border-right:2px #000000 solid;font-weight:bold;color:#2d3b87;"><?php echo $hindi;  ?></td>
+<td align="center" style="color:#2d3b87;font-weight:bold;">
+<?php 
+                             if($hindi > 85)
+                             {
+                             $reshindi='A+';
+                             }
+							 if($hindi > 75 && $hindi < 86)
+                             {
+                             $reshindi= 'A';
+                             }
+							 if($hindi > 65 && $hindi < 76)
+                             {
+                             $reshindi= 'B+';
+                             }
+							 if($hindi > 55 && $hindi < 66)
+                             {
+                             $reshindi= 'B';
+                             }
+							 if($hindi > 50 && $hindi < 56)
+                             {
+                             $reshindi= 'C+';
+                             }
+							 if($hindi > 45 && $hindi < 51)
+                             {
+                             $reshindi= 'C';
+                             }
+							 if($hindi > 32 && $hindi < 46)
+                             {
+                             $reshindi= 'D';
+                             }
+							 if($hindi < 33)
+                             {
+                             $reshindi= 'E';
+                             }
+							 echo $reshindi;
+?>
+</td>
+</tr> 
+
+<tr style="line-height:30PX;">
+<td style="border-right:2px #000000 solid;">&nbsp;<img src="ar.png"  style=""/>Mathematics</td>
+<td align="center" style="border-right:2px #000000 solid;">100</td>
+<td align="center" style="border-right:2px #000000 solid;"><?php echo $hmath_m40;  ?></td>
+<td align="center" style="border-right:2px #000000 solid;"><?php echo $amath_m60;  ?></td>
+<td align="center" style="border-right:2px #000000 solid;font-weight:bold;color:#2d3b87;"><?php echo $math;  ?></td>
+<td align="center" style="color:#2d3b87;font-weight:bold;">
+<?php 
+                              if($math > 85)
+                             {
+                             $resmath='A+';
+                             }
+							 if($math > 75 && $math < 86)
+                             {
+                             $resmath= 'A';
+                             }
+							 if($math > 65 && $math < 76)
+                             {
+                             $resmath= 'B+';
+                             }
+							 if($math > 55 && $math < 66)
+                             {
+                             $resmath= 'B';
+                             }
+							 if($math > 50 && $math < 56)
+                             {
+                             $resmath= 'C+';
+                             }
+							 if($math > 45 && $math < 51)
+                             {
+                             $resmath= 'C';
+                             }
+							 if($math > 32 && $math < 46)
+                             {
+                             $resmath= 'D';
+                             }
+							 if($math < 33)
+                             {
+                             $resmath= 'E';
+                             }
+							 echo $resmath;
+?>
+</td>
+</tr>
+
+<tr style="line-height:30PX; font-weight:bold;">
+<td style="width:200PX;border-right:2px #000000 solid; font-weight:bold;" align="center">Grand Total</td>
+<td align="center" style="border-right:2px #000000 solid;">300</td>
+<td align="center" style="border-right:2px #000000 solid;font-weight:bold;"><?php echo $half;  ?></td>
+<td align="center" style="border-right:2px #000000 solid;font-weight:bold;"><?php echo $annual;  ?></td>
+<td align="center" style="border-right:2px #000000 solid;font-weight:bold;color:#2d3b87;"><?php echo $annual100;  ?></td>
+<td align="center" style="font-weight:bold;color:#00356A;">
+<?php  $fg = $annual100*100/300;
+
+                             if($fg > 85)
+                             {
+                             $refgs='A+';
+                             }
+							 if($fg > 75 && $fg < 86)
+                             {
+                             $refgs= 'A';
+                             }
+							 if($fg > 65 && $fg < 76)
+                             {
+                             $refgs= 'B+';
+                             }
+							 if($fg > 55 && $fg < 66)
+                             {
+                             $refgs= 'B';
+                             }
+							 if($fg > 50 && $fg < 56)
+                             {
+                             $refgs= 'C+';
+                             }
+							 if($fg > 45 && $fg < 51)
+                             {
+                             $refgs= 'C';
+                             }
+							 if($fg > 32 && $fg < 46)
+                             {
+                             $refgs= 'D';
+                             }
+							 if($fg < 33)
+                             {
+                             $refgs= 'E';
+                             }
+							 echo $refgs;
+?>
+</td>
+</tr>
+
+
+<tr style="line-height:30PX;">
+<td colspan="10"><span style="color:#2d3b87; font-size:22px;font-family:Calisto MT; font-weight:bold; margin-left:25PX;">
+<img src="arr.png" />&nbsp;Additional Subject: </span></td>
+</tr>
+<tr style="line-height:30PX;">
+<td style="border-right:2px #000000 solid; width:200PX;">&nbsp;<img src="ar.png"  style=""/>EVS</td>
+<td align="center" style="border-right:2px #000000 solid;">100</td>
+<td align="center" style="border-right:2px #000000 solid;"><?php echo $hsc_m40;  ?></td>
+<td align="center" style="border-right:2px #000000 solid;"><?php echo $asc_m60;  ?></td>
+<td align="center" style="border-right:2px #000 solid;font-weight:bold;color:00356A;"><?php echo $science;  ?></td>
+<td align="center" style="color:#2d3b87;font-weight:bold;">
+<?php 
+                             if($science > 85)
+                             {
+                             $ressc='A+';
+                             }
+							 if($science > 75 && $science < 86)
+                             {
+                             $ressc= 'A';
+                             }
+							 if($science > 65 && $science < 76)
+                             {
+                             $ressc= 'B+';
+                             }
+							 if($science > 55 && $science < 66)
+                             {
+                             $ressc= 'B';
+                             }
+							 if($science > 50 && $science < 56)
+                             {
+                             $ressc= 'C+';
+                             }
+							 if($science > 45 && $science < 51)
+                             {
+                             $ressc= 'C';
+                             }
+							 if($science > 32 && $science < 46)
+                             {
+                             $ressc= 'D';
+                             }
+							 if($science < 33)
+                             {
+                             $ressc= 'E';
+                             }
+							 echo $ressc;
+?>
+</td>
+</tr>
+
+<tr style="line-height:30PX;">
+<td style="border-right:2px #000000 solid;">&nbsp;<img src="ar.png"  style=""/>G.K</td>
+<td align="center" style="border-right:2px #000000 solid;">100</td>
+<td align="center" style="border-right:2px #000000 solid;font-weight:bold;">-</td>
+<td align="center" style="border-right:2px #000000 solid;font-weight:bold;">-</td>
+<td align="center" style="border-right:2px #000 solid;font-weight:bold;color:00356A;">-</td>
+<td align="center" style="color:#2d3b87;font-weight:bold;">
+<?php echo $agk_m60;  ?>
+</td>
+</tr>
+
+<tr style="line-height:30PX;">
+<td style="border-right:2px #000000 solid;">&nbsp;<img src="ar.png"  style=""/>DRAWING</td>
+<td align="center" style="border-right:2px #000000 solid;">100</td>
+<td align="center" style="border-right:2px #000000 solid;font-weight:bold;">-</td>
+<td align="center" style="border-right:2px #000000 solid;font-weight:bold;">-</td>
+<td align="center" style="border-right:2px #000 solid;font-weight:bold;color:00356A;">-</td>
+<td align="center" style="color:#2d3b87;font-weight:bold;">
+<?php echo $ass_m60;  ?>
+</td>
+</tr>
+
+
+
+
+
+
+
+
+</table>
+
+<br clear="all" />
+<div style="width:93%; margin:0 auto; line-height:28px;margin-top:-10px; border-top:2px #000000 solid;border-bottom:2px #000000 solid;">
+<span style="color:#2d3b87; font-size:22px;font-family:Calisto MT; font-weight:bold; margin-left:25PX;">
+<img src="arr.png" />&nbsp; Performance in Co-Scholastics Areas :</span>
+</div>
+<?PHP
+$sid = $rowstud['student_id'];
+$rmk=mysqli_query($con,"select * from healthh where student='$sid' and class='".$rowstud['student_class']."' and session='$ses'");
+$rowrmk=mysqli_fetch_array($rmk);
+
+$rmkk=mysqli_query($con,"select * from healthhh where student='$sid' and class='".$rowstud['student_class']."' and session='$ses'");
+$rowrmkk=mysqli_fetch_array($rmkk);
+
+$att=mysqli_query($con,"select * from att where student='$sid' and class='".$rowstud['student_class']."' and session='$ses'");
+$rowatt=mysqli_fetch_array($att);
+
+?>
+
+
+<table class="tbl" border="1" cellpadding="0" cellspacing="0" style="color:#000000;border:2px #000000 solid;font-size:21PX; margin-left:35PX; float:left; margin-top:5px; width:281PX;">
+<tr style="line-height:35px; background-color:#f9dacb; font-weight:bold;"><td align="center" colspan="2">Co-Curricular Activities</td></tr>
+
+<tr><td>&nbsp;<img src="ar.png"  style=""/>LITERARY SKILLS</td><td style="width:50px;" align="center"><?php echo $rowrmk['height'];?></td></tr>
+<tr><td>&nbsp;<img src="ar.png"  style=""/>SCIENTIFIC SKILLS</td><td align="center"><?php echo $rowrmk['weight'];?></td></tr>
+<tr><td>&nbsp;<img src="ar.png"  style=""/>CULTURAL SKILLS</td><td align="center"><?php echo $rowrmk['vision'];?></td></tr>
+<tr><td>&nbsp;<img src="ar.png"  style=""/>CREATIVITY</td><td align="center"><?php echo $rowrmk['bio'];?></td></tr>
+<tr><td>&nbsp;<img src="ar.png"  style=""/>SPORTS</td><td align="center"><?php echo $rowrmk['math'];?></td></tr>
+</table>
+
+<table class="tbl" border="1" cellpadding="0" cellspacing="0" style="color:#000000;border:2px #000000 solid;font-size:21PX; margin-left:5PX; float:left; margin-top:5px; width:705PX;">
+<tr style="line-height:35px; background-color:#f9dacb; font-weight:bold;"><td align="center" colspan="4">Social Activities</td></tr>
+
+<tr><td>&nbsp;<img src="ar.png"  style=""/>REGULARITY</td><td style="width:50px;" align="center"><?php echo $rowrmkk['height'];?></td>
+<td>&nbsp;<img src="ar.png"  style=""/>ENVIRONMENTAL CONSCIOUSNESS</td><td style="width:50px;" align="center"><?php echo $rowrmkk['s1'];?></td></tr>
+<tr><td>&nbsp;<img src="ar.png"  style=""/>PUNCTUALITY</td><td align="center"><?php echo $rowrmkk['weight'];?></td>
+<td>&nbsp;<img src="ar.png"  style=""/>LEADERSHIP QUALITIES</td><td align="center"><?php echo $rowrmkk['s2'];?></td>
+</tr>
+<tr><td>&nbsp;<img src="ar.png"  style=""/>CLEANLINESS</td><td align="center"><?php echo $rowrmkk['vision'];?></td>
+<td>&nbsp;<img src="ar.png"  style=""/>TRUTHFULNESS</td><td align="center"><?php echo $rowrmkk['s3'];?></td>
+</tr>
+<tr><td>&nbsp;<img src="ar.png"  style=""/>DISCIPLINE </td><td align="center"><?php echo $rowrmkk['bio'];?></td>
+<td>&nbsp;<img src="ar.png"  style=""/>HONESTY </td><td align="center"><?php echo $rowrmkk['s4'];?></td>
+</tr>
+<tr><td>&nbsp;<img src="ar.png"  style=""/>CO-OPERATION</td><td align="center"><?php echo $rowrmkk['math'];?></td>
+<td>&nbsp;<img src="ar.png"  style=""/>EXPRESSIVE</td><td align="center"><?php echo $rowrmkk['s5'];?></td>
+</tr>
+</table>
+
+<br clear="all" />
+<div style="width:93%; margin:0 auto; line-height:28px;margin-top:10px; border-top:2px #000000 solid;border-bottom:2px #000000 solid;">
+<span style="color:#2d3b87; font-size:22px;font-family:Calisto MT; font-weight:bold; margin-left:25PX;">
+<img src="arr.png" />&nbsp; Final Result :</span>
+</div>
+
+<table class="tbl" border="1" cellpadding="0" cellspacing="0" style="color:#000000;border:2px #000000 solid;font-size:21PX;margin-left:35PX;float:left;margin-top:5px;width:991PX;">
+<tr style="line-height:35px; background-color:#f9dacb; font-weight:bold;">
+<td align="center">Max. Marks</td><td align="center">Obt. Marks</td><td align="center">Result</td><td align="center">Percentage</td><td align="center">Grade</td>
+<td align="center">Rank</td><td align="center">Attendance</td>
+</tr>
+<tr align="center" style="color:#00356A; font-weight:bold;">
+<td>300</td><td><?php echo $annual100; ?></td><td>Pass</td>
+
+<td><?php $fg = $annual100*100/300; echo round($fg);?>%</td>
+<td>
+                             <?php
+                             if($fg > 85)
+                             {
+                             $refgs='A+';
+                             }
+							 if($fg > 75 && $fg < 86)
+                             {
+                             $refgs= 'A';
+                             }
+							 if($fg > 65 && $fg < 76)
+                             {
+                             $refgs= 'B+';
+                             }
+							 if($fg > 55 && $fg < 66)
+                             {
+                             $refgs= 'B';
+                             }
+							 if($fg > 50 && $fg < 56)
+                             {
+                             $refgs= 'C+';
+                             }
+							 if($fg > 45 && $fg < 51)
+                             {
+                             $refgs= 'C';
+                             }
+							 if($fg > 32 && $fg < 46)
+                             {
+                             $refgs= 'D';
+                             }
+							 if($fg < 33)
+                             {
+                             $refgs= 'E';
+                             }
+							 echo $refgs;
+?>
+</td>
+<td><?php echo $rowatt['s2'];?></td>
+<td><?php echo $rowatt['s1'];?></td>
+</tr>
+
+</table>
+
+<table class="tbl" border="0" cellpadding="0" cellspacing="0" style="color:#000000;font-size:21PX;margin-left:35PX;float:left;margin-top:15px;width:991PX;">
+<tr style="line-height:20px; color:#000;">
+<td style="width:225PX;">Class Teacher Remark : </td>
+<td style="width:320px; color:#B9001C; font-weight:bold;border-top:2px #000 solid;border-bottom:2px #000 solid;">
+<?php
+                             if($fg > 90)
+                             {
+                             $rmk='Outstanding';
+                             }
+							 if($fg > 80 && $fg < 91)
+                             {
+                             $rmk= 'Excellent';
+                             }
+							 if($fg > 70 && $fg < 81)
+                             {
+                             $rmk= 'Very good';
+                             }
+							 if($fg > 60 && $fg < 71)
+                             {
+                             $rmk= 'Good';
+                             }
+							 if($fg > 50 && $fg < 61)
+                             {
+                             $rmk= 'Average';
+                             }
+							 if($fg > 40 && $fg < 51)
+                             {
+                             $rmk= 'Need encouragement';
+                             }
+							 if($fg > 32 && $fg < 41)
+                             {
+                             $rmk= 'Need improvement';
+                             }
+							 if($fg < 33)
+                             {
+                             $rmk= '-';
+                             }
+							 echo $rmk;
+?>
+
+</td>
+<td style="width:348px;"><span style="color:#ff5722;">&nbsp;&nbsp;&nbsp;Congratulations!</span> <span style="color:#2d3b87;">Promoted to Class :</span></td>
+<td style="color:#B9001C; font-weight:bold;border-top:2px #000 solid;border-bottom:2px #000 solid;">
+<?PHP
+if($rowstud['student_class']=='I')
+{
+$clss = '2nd';
+}
+if($rowstud['student_class']=='I A')
+{
+$clss = '2nd';
+}
+if($rowstud['student_class']=='I B')
+{
+$clss = '2nd';
+}
+if($rowstud['student_class']=='II')
+{
+$clss = '3rd';
+}
+if($rowstud['student_class']=='II A')
+{
+$clss = '3rd';
+}
+if($rowstud['student_class']=='II B')
+{
+$clss = '3rd';
+}
+echo $clss;
+?>
+
+ </td>
+</tr
+></table>
+<br clear="all" /><br clear="all" />
+<br clear="all" />
+<?php /*?><table border="0" cellpadding="0" cellspacing="0" style="width:99%;font-size:21px; margin-top:50px; margin-left:10px;font-weight:bold;color:#000000;">
+<tr>
+<td align="center" style="float:left; margin-left:50px;">Class Teacher</td>
+
+
+<td  align="center" style="float:right; margin-right:100px">Principal</td>
+</tr>
+</table><?php */?>
+</div>
+</div>	
+<br clear="all" />
+</div>
+    
+  <?php
+      $i++;
+	  }
+      ?>      
+	   
+
+	

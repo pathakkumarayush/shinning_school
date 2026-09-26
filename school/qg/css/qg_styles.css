@@ -1,0 +1,5 @@
+/* school/qg/css/qg_styles.css */
+/* Hide global student search elements on QG pages to prevent overlapping elements */
+.search, #searchid, #result {
+    display: none !important;
+}
