@@ -1,7 +1,7 @@
 <style>
 .enquiry{ width:100%; height:45px;background-color:#FFFFFF; margin-top:10px; border:4px #006633 solid;}
 
-.col_4{ width:100%; height:500px; margin-left:2px; background-color:#FFFFFF;float:left; margin-top:10px;-webkit-box-shadow: 0 0 10px rgba(0,0,0, .65);
+.col_4{ width:100%; height:auto; min-height:650px; margin-left:2px; background-color:#FFFFFF;float:left; margin-top:10px;-webkit-box-shadow: 0 0 10px rgba(0,0,0, .65);
 -moz-box-shadow: 0 0 10px rgba(0,0,0, .65);
 box-shadow: 0 0 10px rgba(0,0,0, .65);}
 ::-webkit-input-placeholder {
@@ -249,25 +249,65 @@ input[type=button]:hover{
    
    
    <?php
-                    if(isset($_REQUEST["motother"]))
-                    {	
-					$otnm = $_POST["otnm"];
-                    $id=$_POST["sid"].'ot';
-					$name = $id.$_FILES['tc_fileo']['name'];	
-				    $target_path = "upload/";
-				    $target_path = $target_path.$id.basename( $_FILES['tc_fileo']['name']); 
-			        if(move_uploaded_file($_FILES['tc_fileo']['tmp_name'], $target_path)) 
-					{ 
-				    $updateimg=mysqli_query($con,"update student set otimg='$name',otyes='Yes',otnm='$otnm' where student_id='".$_POST['sid']."' and student_session='".$_SESSION['session']."'");
-				    $msg="Image updated Successfully";	
-					}
+if(isset($_REQUEST["motother"]))
+{	
+    $otnm = $_POST["otnm"];
+    $id=$_POST["sid"].'ot';
+    $name = $id.$_FILES['tc_fileo']['name'];	
+    $target_path = "document/";
+    $target_path = $target_path.$id.basename( $_FILES['tc_fileo']['name']); 
+    if(move_uploaded_file($_FILES['tc_fileo']['tmp_name'], $target_path)) 
+    { 
+        $updateimg=mysqli_query($con,"update student set otimg='$name',otyes='Yes',otnm='$otnm' where student_id='".$_POST['sid']."' and student_session='".$_SESSION['session']."'");
+        $msg="Image updated Successfully";	
+    }
 ?>
  <script type="text/javascript">
              window.location="<?php echo $var."edit_admadd&&sumsg=Updated Successfully&upstudid=".$_POST["sid"]; ?>";
  </script>
  <?php
 }
-   ?>
+?>
+
+<?php
+if(isset($_REQUEST["scholardoc"]))
+{	
+    $id = $_POST["sid"].'sch';
+    $name = $id.$_FILES['scholar_doc_img']['name'];	
+    $target_path = "document/";
+    $target_path = $target_path.$id.basename($_FILES['scholar_doc_img']['name']); 
+    if(move_uploaded_file($_FILES['scholar_doc_img']['tmp_name'], $target_path)) 
+    { 
+        $updateimg = mysqli_query($con,"update student set scholar_doc_img='$name',scholar_doc_yes='Yes' where student_id='".$_POST['sid']."' and student_session='".$_SESSION['session']."'");
+        $msg = "Image updated Successfully";	
+    }
+?>
+ <script type="text/javascript">
+             window.location="<?php echo $var."edit_admadd&&sumsg=Updated Successfully&upstudid=".$_POST["sid"]; ?>";
+ </script>
+ <?php
+}
+?>
+
+<?php
+if(isset($_REQUEST["prevmarksheet"]))
+{	
+    $id = $_POST["sid"].'pmark';
+    $name = $id.$_FILES['prev_marksheet_img']['name'];	
+    $target_path = "document/";
+    $target_path = $target_path.$id.basename($_FILES['prev_marksheet_img']['name']); 
+    if(move_uploaded_file($_FILES['prev_marksheet_img']['tmp_name'], $target_path)) 
+    { 
+        $updateimg = mysqli_query($con,"update student set prev_marksheet_img='$name',prev_marksheet_yes='Yes' where student_id='".$_POST['sid']."' and student_session='".$_SESSION['session']."'");
+        $msg = "Image updated Successfully";	
+    }
+?>
+ <script type="text/javascript">
+             window.location="<?php echo $var."edit_admadd&&sumsg=Updated Successfully&upstudid=".$_POST["sid"]; ?>";
+ </script>
+ <?php
+}
+?>
    
    
  
@@ -479,7 +519,31 @@ while(el=inp[i++]){
 		</tr>
 		</form>
 		
+		<form method="post" name="myForm" id="myform" action="#" enctype="multipart/form-data" style="font-weight:bold">  
+		<tr align="center" style="line-height:40px;font-weight:bold">
+		<td>8.</td><td>Scholar Document</td><td>
+		<input type="checkbox" value="Yes" name="scholar_doc_yes" <?php if(isset($rowstud["scholar_doc_yes"]) && $rowstud["scholar_doc_yes"]=='Yes') echo 'checked="checked"'; ?> required/> 
+		</td>
+		<td>
+		<input type="file" name="scholar_doc_img" required/><input type="hidden" name="sid" value="<?php echo $_GET["upstudid"]; ?>" />
+		<span style="color:#CC0000; font-size:12px; margin-left:-100px;">Max. Size 200kb</span>
+		</td>
+		<td><input type="submit" name="scholardoc" value="Update Scholar Doc." id="add" style="width:155px; height:25px;margin-left:0px;padding: 5px;" /></td>
+		</tr>
+		</form>
 		
+		<form method="post" name="myForm" id="myform" action="#" enctype="multipart/form-data" style="font-weight:bold">  
+		<tr align="center" style="line-height:40px;font-weight:bold">
+		<td>9.</td><td>Previous Marksheet</td><td>
+		<input type="checkbox" value="Yes" name="prev_marksheet_yes" <?php if(isset($rowstud["prev_marksheet_yes"]) && $rowstud["prev_marksheet_yes"]=='Yes') echo 'checked="checked"'; ?> required/> 
+		</td>
+		<td>
+		<input type="file" name="prev_marksheet_img" required/><input type="hidden" name="sid" value="<?php echo $_GET["upstudid"]; ?>" />
+		<span style="color:#CC0000; font-size:12px; margin-left:-100px;">Max. Size 200kb</span>
+		</td>
+		<td><input type="submit" name="prevmarksheet" value="Update Prev Marksheet" id="add" style="width:155px; height:25px;margin-left:0px;padding: 5px;" /></td>
+		</tr>
+		</form>
 		
 		</table>
 		</div>

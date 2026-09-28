@@ -214,10 +214,14 @@ th, td { padding: 8px 5px !important; }
 			 <th style="padding: 10px;">FATHER NAME</th>
 			 <th style="padding: 10px;">MOTHER NAME</th>
 			 <th style="padding: 10px;">MOBILE</th>
+			 <th style="padding: 10px;">WhatsApp</th>
 			 <th style="padding: 10px;">DOB</th>
 			 <th style="width:104px;">SSSMID</th>
 			 <th style="width:104px;">Roll No</th>
 			 <th style="width:104px;">Aadhar No</th>
+			 <th style="padding: 10px;">Ht/Wt</th>
+			 <th style="padding: 10px;">Portal</th>
+			 <th style="padding: 10px;">URISE</th>
 			 <th style="width:104px;">STUDENT CLASS</th>
 			 <th colspan="2">Action</th>
              </tr>
@@ -230,73 +234,82 @@ th, td { padding: 8px 5px !important; }
 	     $studrows=mysqli_fetch_array($searchs);
 	     ?>
          <tbody>	
-		 <tr style="min-height:30px;text-align: center; color:#000000">
+		 <tr style="min-height:30px;text-align: center; color:#000000" id="row_student_<?php echo $i;?>">
 		 <td>
-         <input type="text" name="student_scholar" value="<?php echo $studrow['student_scholar']; ?>" id="student_scholar<?php echo $i;?>" style="width:50px;">
+         <input type="text" name="student_scholar" value="<?php echo htmlspecialchars($studrow['student_scholar']); ?>" id="student_scholar<?php echo $i;?>" style="width:50px;">
          </td>
 		 <td>
-         <input type="text" name="student_name" value="<?php echo $studrow['student_name']; ?>" id="student_name<?php echo $i;?>" style="width:150px;">
+         <input type="text" name="student_name" value="<?php echo htmlspecialchars($studrow['student_name']); ?>" id="student_name<?php echo $i;?>" style="width:130px;">
 		 
-		 <input type="hidden" name="idm"  value="<?php echo $studrow['student_id']; ?>" id="idm<?php echo $i;?>"></td>
+		 <input type="hidden" name="idm"  value="<?php echo htmlspecialchars($studrow['student_id']); ?>" id="idm<?php echo $i;?>"></td>
 		 
 		 <td>
-         <input type="text" name="student_fname" value="<?php echo $studrow['student_fname']; ?>" id="student_fname<?php echo $i;?>" style="width:100px;">
+         <input type="text" name="student_fname" value="<?php echo htmlspecialchars($studrow['student_fname']); ?>" id="student_fname<?php echo $i;?>" style="width:100px;">
          </td>
 		 
 		  <td>
-         <input type="text" name="m_name" value="<?php echo $studrow['m_name']; ?>" id="m_name<?php echo $i;?>" style="width:100px;">
-         </td>
-		 
-		
-		 
-		  <td>
-         <input type="text" name="student_contactno" value="<?php echo $studrow['student_contactno']; ?>" id="student_contactno<?php echo $i;?>" style="width:85px;">
+         <input type="text" name="m_name" value="<?php echo htmlspecialchars($studrow['m_name']); ?>" id="m_name<?php echo $i;?>" style="width:80px;">
          </td>
 		 
 		  <td>
-         <input type="text" name="student_dob" value="<?php echo $studrow['student_dob']; ?>" id="student_dob<?php echo $i;?>" style="width:100px;">
+         <input type="text" name="student_contactno" value="<?php echo htmlspecialchars($studrow['student_contactno']); ?>" id="student_contactno<?php echo $i;?>" style="width:85px;">
          </td>
-		 
+
+		  <td>
+         <input type="text" name="whatsapp_no" value="<?php echo htmlspecialchars($studrow['whatsapp_no'] ?? ''); ?>" id="whatsapp_no<?php echo $i;?>" style="width:85px;" placeholder="WhatsApp">
+         </td>
 		 
 		  <td>
-         <input type="text" name="sssmid" value="<?php echo $studrow['religion']; ?>" id="sssmid<?php echo $i;?>" style="width:100px;">
+         <input type="text" name="student_dob" value="<?php echo htmlspecialchars($studrow['student_dob']); ?>" id="student_dob<?php echo $i;?>" style="width:80px;">
          </td>
 		 
-		
+		  <td>
+         <input type="text" name="sssmid" value="<?php echo htmlspecialchars($studrow['religion']); ?>" id="sssmid<?php echo $i;?>" style="width:80px;">
+         </td>
 		 
 		 <td>
-         <input type="text" name="rnoo" value="<?php echo $studrow['rno']; ?>" id="rnoo<?php echo $i;?>" style="width:80px;">
+         <input type="text" name="rnoo" value="<?php echo htmlspecialchars($studrow['rno']); ?>" id="rnoo<?php echo $i;?>" style="width:60px;">
          </td>
 		 
 		  <td>
-         <input type="text" name="med" value="<?php echo $studrow['student_rollno']; ?>" id="med<?php echo $i;?>" style="width:80px;">
+         <input type="text" name="med" value="<?php echo htmlspecialchars($studrow['student_rollno']); ?>" id="med<?php echo $i;?>" style="width:80px;">
+         </td>
+
+		 <td>
+         <input type="text" name="height" value="<?php echo htmlspecialchars($studrow['height'] ?? ''); ?>" id="height<?php echo $i;?>" style="width:35px;" placeholder="Ht">
+         <input type="text" name="weight" value="<?php echo htmlspecialchars($studrow['weight'] ?? ''); ?>" id="weight<?php echo $i;?>" style="width:35px;" placeholder="Wt">
+         </td>
+
+		 <td>
+         <select name="education_portal_update" id="education_portal_update<?php echo $i;?>" style="width:50px; font-size:11px;">
+           <option value="yes" <?php if(isset($studrow['education_portal_update']) && strtolower($studrow['education_portal_update'])=='yes'){ echo 'selected'; } ?>>Yes</option>
+           <option value="no" <?php if(!isset($studrow['education_portal_update']) || strtolower($studrow['education_portal_update'])!='yes'){ echo 'selected'; } ?>>No</option>
+         </select>
+         </td>
+
+		 <td>
+         <select name="urise_update" id="urise_update<?php echo $i;?>" style="width:50px; font-size:11px;">
+           <option value="yes" <?php if(isset($studrow['urise_update']) && strtolower($studrow['urise_update'])=='yes'){ echo 'selected'; } ?>>Yes</option>
+           <option value="no" <?php if(!isset($studrow['urise_update']) || strtolower($studrow['urise_update'])!='yes'){ echo 'selected'; } ?>>No</option>
+         </select>
          </td>
 		 
-		 
 		 <td>
-            
-	   
-	       <select name="student_class" class="select" id="student_class<?php echo $i;?>" style="width:100px;">
-        
+	       <select name="student_class" class="select" id="student_class<?php echo $i;?>" style="width:80px;">
 		  <?php
            $res=mysqli_query($con,"select distinct(class) from class");
            while($rows=mysqli_fetch_array($res))
            {
 		   ?>
-		   <option value="<?php echo $rows["class"]; ?>" <?php if($rows["class"]==$studrow["student_class"] ) { ?> selected="selected" <?php }?>> <?php echo $rows["class"]; ?></option>
-		   
-	
-       
+		   <option value="<?php echo htmlspecialchars($rows["class"]); ?>" <?php if($rows["class"]==$studrow["student_class"] ) { ?> selected="selected" <?php }?>> <?php echo htmlspecialchars($rows["class"]); ?></option>
            <?php
 		   }  
            ?>
          </select>
-			
          </td>
 		
-	
 		  <td >
-            <input type="button" name="submit" value="Update"  onclick="return update_record(<?php echo $i;?>);"/>
+            <input type="button" name="submit" value="Update" onclick="return update_record(<?php echo $i;?>);"/>
          </td>
 	</tr>
     </tbody>
@@ -323,21 +336,26 @@ var student_name= document.getElementById('student_name'+hid).value;
 var student_fname= document.getElementById('student_fname'+hid).value;
 var m_name= document.getElementById('m_name'+hid).value;
 var student_contactno= document.getElementById('student_contactno'+hid).value;
+var whatsapp_no= document.getElementById('whatsapp_no'+hid).value;
 var student_scholar= document.getElementById('student_scholar'+hid).value;
 var sssmid= document.getElementById('sssmid'+hid).value;
 var rnoo= document.getElementById('rnoo'+hid).value;
 var med= document.getElementById('med'+hid).value;
 var student_dob= document.getElementById('student_dob'+hid).value;
+var height= document.getElementById('height'+hid).value;
+var weight= document.getElementById('weight'+hid).value;
+var education_portal_update= document.getElementById('education_portal_update'+hid).value;
+var urise_update= document.getElementById('urise_update'+hid).value;
 
-var data_str= "student_class="+student_class+"&idm="+idm+"&student_name="+student_name+"&student_fname="+student_fname+"&m_name="+m_name+"&student_contactno="+student_contactno+"&sssmid="+sssmid+"&rnoo="+rnoo+"&med="+med+"&student_scholar="+student_scholar+"&student_dob="+student_dob;
+var data_str= "student_class="+encodeURIComponent(student_class)+"&idm="+encodeURIComponent(idm)+"&student_name="+encodeURIComponent(student_name)+"&student_fname="+encodeURIComponent(student_fname)+"&m_name="+encodeURIComponent(m_name)+"&student_contactno="+encodeURIComponent(student_contactno)+"&whatsapp_no="+encodeURIComponent(whatsapp_no)+"&sssmid="+encodeURIComponent(sssmid)+"&rnoo="+encodeURIComponent(rnoo)+"&med="+encodeURIComponent(med)+"&student_scholar="+encodeURIComponent(student_scholar)+"&student_dob="+encodeURIComponent(student_dob)+"&height="+encodeURIComponent(height)+"&weight="+encodeURIComponent(weight)+"&education_portal_update="+encodeURIComponent(education_portal_update)+"&urise_update="+encodeURIComponent(urise_update);
  
 $.ajax({
 type:"POST",
 url:"sedit_per.php",
 data:data_str,
 success:function(){
-alert('updated successfully!');
-
+    $('#row_student_'+hid).css('background-color', '#d4edda');
+    alert('updated successfully!');
 }
 });
 } 

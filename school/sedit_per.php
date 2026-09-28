@@ -25,10 +25,15 @@ if (isset($_POST['students']) && is_array($_POST['students'])) {
         $student_gender  = mysqli_real_escape_string($con, $st['student_gender'] ?? '');
         $student_address = mysqli_real_escape_string($con, $st['student_address'] ?? '');
         $hname           = mysqli_real_escape_string($con, $st['hname'] ?? '');
+        $whatsapp_no     = mysqli_real_escape_string($con, $st['whatsapp_no'] ?? ($st['whatsapp'] ?? ''));
+        $height          = mysqli_real_escape_string($con, $st['height'] ?? '');
+        $weight          = mysqli_real_escape_string($con, $st['weight'] ?? '');
+        $education_portal_update = mysqli_real_escape_string($con, $st['education_portal_update'] ?? ($st['portal'] ?? 'no'));
+        $urise_update    = mysqli_real_escape_string($con, $st['urise_update'] ?? ($st['urise'] ?? 'no'));
 
         mysqli_query($con,"update student set student_class='$student_class',student_name='$student_name',student_fname='$student_fname',m_name='$m_name',student_contactno='$student_contactno',
         student_scholar='$student_scholar',religion='$sssmid',sedate='$rnoo',student_rollno='$med',student_dob='$student_dob',family_id='$family_id',caste='$caste',
-        student_gender='$student_gender',reg_no='$student_address',hname='$hname' where (student_id='$idm' or id='$idm') 
+        student_gender='$student_gender',reg_no='$student_address',hname='$hname',whatsapp_no='$whatsapp_no',height='$height',weight='$weight',education_portal_update='$education_portal_update',urise_update='$urise_update' where (student_id='$idm' or id='$idm') 
         and student_session='$sess'");
 
         mysqli_query($con,"update roll_no set rno='$rnoo' where sid='$idm' and ses='$sess'");
@@ -56,10 +61,15 @@ $caste = mysqli_real_escape_string($con, $_POST['caste'] ?? '');
 $student_gender = mysqli_real_escape_string($con, $_POST['student_gender'] ?? '');
 $student_address = mysqli_real_escape_string($con, $_POST['student_address'] ?? '');
 $hname = mysqli_real_escape_string($con, $_POST['hname'] ?? '');
+$whatsapp_no = mysqli_real_escape_string($con, $_POST['whatsapp_no'] ?? ($_POST['whatsapp'] ?? ''));
+$height = mysqli_real_escape_string($con, $_POST['height'] ?? '');
+$weight = mysqli_real_escape_string($con, $_POST['weight'] ?? '');
+$education_portal_update = mysqli_real_escape_string($con, $_POST['education_portal_update'] ?? ($_POST['portal'] ?? 'no'));
+$urise_update = mysqli_real_escape_string($con, $_POST['urise_update'] ?? ($_POST['urise'] ?? 'no'));
 
 mysqli_query($con,"update student set student_class='$student_class',student_name='$student_name',student_fname='$student_fname',m_name='$m_name',student_contactno='$student_contactno',
 student_scholar='$student_scholar',religion='$sssmid',sedate='$rnoo',student_rollno='$med',student_dob='$student_dob',family_id='$family_id',caste='$caste',
-student_gender='$student_gender',reg_no='$student_address',hname='$hname' where (student_id='$idm' or id='$idm') 
+student_gender='$student_gender',reg_no='$student_address',hname='$hname',whatsapp_no='$whatsapp_no',height='$height',weight='$weight',education_portal_update='$education_portal_update',urise_update='$urise_update' where (student_id='$idm' or id='$idm') 
 and student_session='".$sess."'");
 
 mysqli_query($con,"update roll_no set rno='$rnoo' where sid='$idm' and ses='".$sess."'");

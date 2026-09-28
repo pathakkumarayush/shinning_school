@@ -1,7 +1,7 @@
 <style>
 .enquiry{ width:100%; height:45px;background-color:#FFFFFF; margin-top:10px; border:4px #006633 solid;}
 
-.col_4{ width:100%; height:700px; margin-left:2px; background-color:#FFFFFF;float:left; margin-top:10px;-webkit-box-shadow: 0 0 10px rgba(0,0,0, .65);
+.col_4{ width:100%; height:auto; min-height:850px; margin-left:2px; background-color:#FFFFFF;float:left; margin-top:10px;-webkit-box-shadow: 0 0 10px rgba(0,0,0, .65);
 -moz-box-shadow: 0 0 10px rgba(0,0,0, .65);
 box-shadow: 0 0 10px rgba(0,0,0, .65);}
 ::-webkit-input-placeholder {
@@ -429,6 +429,46 @@ if(isset($_POST['delete_doc'])) {
  <?php
 }
    ?> 
+
+<?php
+if(isset($_REQUEST["scholardoc"]))
+{	
+    $id = $_POST["sid"].'sch';
+    $name = $id.$_FILES['scholar_doc_img']['name'];	
+    $target_path = "document/";
+    $target_path = $target_path.$id.basename($_FILES['scholar_doc_img']['name']); 
+    if(move_uploaded_file($_FILES['scholar_doc_img']['tmp_name'], $target_path)) 
+    { 
+        $updateimg = mysqli_query($con,"update student set scholar_doc_img='$name',scholar_doc_yes='Yes' where student_id='".$_POST['sid']."' and student_session='".$_SESSION['session']."'");
+        $msg = "Image updated Successfully";	
+    }
+?>
+ <script type="text/javascript">
+             window.location="<?php echo $var."edit_admadd&&sumsg=Updated Successfully&upstudid=".$_POST["sid"]; ?>";
+ </script>
+ <?php
+}
+?>
+
+<?php
+if(isset($_REQUEST["prevmarksheet"]))
+{	
+    $id = $_POST["sid"].'pmark';
+    $name = $id.$_FILES['prev_marksheet_img']['name'];	
+    $target_path = "document/";
+    $target_path = $target_path.$id.basename($_FILES['prev_marksheet_img']['name']); 
+    if(move_uploaded_file($_FILES['prev_marksheet_img']['tmp_name'], $target_path)) 
+    { 
+        $updateimg = mysqli_query($con,"update student set prev_marksheet_img='$name',prev_marksheet_yes='Yes' where student_id='".$_POST['sid']."' and student_session='".$_SESSION['session']."'");
+        $msg = "Image updated Successfully";	
+    }
+?>
+ <script type="text/javascript">
+             window.location="<?php echo $var."edit_admadd&&sumsg=Updated Successfully&upstudid=".$_POST["sid"]; ?>";
+ </script>
+ <?php
+}
+?>
  
  <?php
  
@@ -999,6 +1039,76 @@ while(el=inp[i++]){
 		
 		
 		<td><input type="submit"  name="motother" value="Update Other Doc." id="add" style="width:155px; height:25px;margin-left:0px;padding: 5px;" /></td>
+		</tr>
+		</form>
+
+		<form method="post" name="myForm" id="myform" action="#" enctype="multipart/form-data" style="font-weight:bold">  
+		<tr align="center" style="line-height:40px;font-weight:bold">
+		<td>13.</td><td>Scholar Document</td><td>
+		<input type="checkbox" value="Yes" name="scholar_doc_yes" <?php if(isset($rowstud["scholar_doc_yes"]) && $rowstud["scholar_doc_yes"]=='Yes') echo 'checked="checked"'; ?> required/> 
+		</td>
+		<td>
+		<input type="file" name="scholar_doc_img" required/><input type="hidden" name="sid" value="<?php echo $_GET["upstudid"]; ?>" />
+		</td>
+		
+		<td>
+		<?php 
+		if(empty($rowstud["scholar_doc_img"]))
+		{
+		?>
+		<a href="" target="_blank">File Not Uploaded</a>
+		<?php
+		}else{
+		?>
+		<a href="document/<?php echo $rowstud["scholar_doc_img"]; ?>" target="_blank">File Uploaded</a>
+			<form method="post" style="margin-top:5px;" novalidate>
+               <input type="hidden" name="sid" value="<?php echo $_GET["upstudid"]; ?>">
+               <input type="hidden" name="del_col" value="scholar_doc_img">
+           <button type="button" onclick="deleteDoc('<?php echo $_GET["upstudid"]; ?>','scholar_doc_img')">
+            Delete
+           </button>
+         </form>
+		<?php
+		}
+		?>
+		</td>
+		
+		<td><input type="submit" name="scholardoc" value="Update Scholar Doc." id="add" style="width:155px; height:25px;margin-left:0px;padding: 5px;" /></td>
+		</tr>
+		</form>
+		
+		<form method="post" name="myForm" id="myform" action="#" enctype="multipart/form-data" style="font-weight:bold">  
+		<tr align="center" style="line-height:40px;font-weight:bold">
+		<td>14.</td><td>Previous Marksheet</td><td>
+		<input type="checkbox" value="Yes" name="prev_marksheet_yes" <?php if(isset($rowstud["prev_marksheet_yes"]) && $rowstud["prev_marksheet_yes"]=='Yes') echo 'checked="checked"'; ?> required/> 
+		</td>
+		<td>
+		<input type="file" name="prev_marksheet_img" required/><input type="hidden" name="sid" value="<?php echo $_GET["upstudid"]; ?>" />
+		</td>
+		
+		<td>
+		<?php 
+		if(empty($rowstud["prev_marksheet_img"]))
+		{
+		?>
+		<a href="" target="_blank">File Not Uploaded</a>
+		<?php
+		}else{
+		?>
+		<a href="document/<?php echo $rowstud["prev_marksheet_img"]; ?>" target="_blank">File Uploaded</a>
+			<form method="post" style="margin-top:5px;" novalidate>
+               <input type="hidden" name="sid" value="<?php echo $_GET["upstudid"]; ?>">
+               <input type="hidden" name="del_col" value="prev_marksheet_img">
+           <button type="button" onclick="deleteDoc('<?php echo $_GET["upstudid"]; ?>','prev_marksheet_img')">
+            Delete
+           </button>
+         </form>
+		<?php
+		}
+		?>
+		</td>
+		
+		<td><input type="submit" name="prevmarksheet" value="Update Prev Marksheet" id="add" style="width:155px; height:25px;margin-left:0px;padding: 5px;" /></td>
 		</tr>
 		</form>
 		</table>

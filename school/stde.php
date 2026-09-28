@@ -227,17 +227,19 @@ th, td { padding: 5px 1px !important; }
 			 <th style="padding: 5px;">FATHER NAME</th>
 			 <th style="padding: 5px;">MOTHER NAME</th>
 			 <th style="padding: 5px;">MOBILE</th>
+			 <th style="padding: 5px;">WhatsApp</th>
 			 <th style="padding: 5px;">DOB</th>
 			 <th style="padding: 5px;">f_id</th>
 			 <th style="width:50px;">SSSMID</th>
 			 <th style="width:50px;">A/C N0</th>
 			 <th style="width:104px;">Aadhar</th>
-			
 			 <th style="width:70px;">Caste</th>
-			  
-			  <th style="width:50px;">Gend</th>
-			   <th style="width:70px;">Enrol No</th>
-			    <th style="width:70px;">CLASS</th>
+			 <th style="width:50px;">Gend</th>
+			 <th style="width:70px;">Enrol No</th>
+			 <th style="padding: 5px;">Ht/Wt</th>
+			 <th style="padding: 5px;">Portal</th>
+			 <th style="padding: 5px;">URISE</th>
+			 <th style="width:70px;">CLASS</th>
 			 <th colspan="2">Action</th>
              </tr>
             </thead>
@@ -258,20 +260,24 @@ th, td { padding: 5px 1px !important; }
          <input type="text" name="student_scholar" value="<?php echo htmlspecialchars($studrow['student_scholar']); ?>" id="student_scholar<?php echo $i;?>" style="width:40px;">
          </td>
 		 <td>
-         <input type="text" name="student_name" value="<?php echo htmlspecialchars($studrow['student_name']); ?>" id="student_name<?php echo $i;?>" style="width:120px;">
+         <input type="text" name="student_name" value="<?php echo htmlspecialchars($studrow['student_name']); ?>" id="student_name<?php echo $i;?>" style="width:110px;">
 		 
 		 <input type="hidden" name="idm"  value="<?php echo htmlspecialchars($studrow['student_id']); ?>" id="idm<?php echo $i;?>"></td>
 		 
 		 <td>
-         <input type="text" name="student_fname" value="<?php echo htmlspecialchars($studrow['student_fname']); ?>" id="student_fname<?php echo $i;?>" style="width:100px;">
+         <input type="text" name="student_fname" value="<?php echo htmlspecialchars($studrow['student_fname']); ?>" id="student_fname<?php echo $i;?>" style="width:90px;">
          </td>
 		 
 		  <td>
-         <input type="text" name="m_name" value="<?php echo htmlspecialchars($studrow['m_name']); ?>" id="m_name<?php echo $i;?>" style="width:70px;">
+         <input type="text" name="m_name" value="<?php echo htmlspecialchars($studrow['m_name']); ?>" id="m_name<?php echo $i;?>" style="width:65px;">
          </td>
 		 
 		  <td>
-         <input type="text" name="student_contactno" value="<?php echo htmlspecialchars($studrow['student_contactno']); ?>" id="student_contactno<?php echo $i;?>" maxlength="10" style="width:75px;">
+         <input type="text" name="student_contactno" value="<?php echo htmlspecialchars($studrow['student_contactno']); ?>" id="student_contactno<?php echo $i;?>" maxlength="10" style="width:75px;" placeholder="Mobile">
+         </td>
+
+		  <td>
+         <input type="text" name="whatsapp_no" value="<?php echo htmlspecialchars($studrow['whatsapp_no'] ?? ''); ?>" id="whatsapp_no<?php echo $i;?>" maxlength="15" style="width:75px;" placeholder="WhatsApp">
          </td>
 		 
 		  <td>
@@ -287,11 +293,11 @@ th, td { padding: 5px 1px !important; }
          </td>
 		 
 		 <td>
-         <input type="text" name="rnoo" value="<?php echo htmlspecialchars($studrow['sedate']); ?>" id="rnoo<?php echo $i;?>" style="width:60px;">
+         <input type="text" name="rnoo" value="<?php echo htmlspecialchars($studrow['sedate']); ?>" id="rnoo<?php echo $i;?>" style="width:50px;">
          </td>
 		 
 		  <td>
-         <input type="text" name="med" value="<?php echo htmlspecialchars($studrow['student_rollno']); ?>" id="med<?php echo $i;?>" style="width:80px;" maxlength="12">
+         <input type="text" name="med" value="<?php echo htmlspecialchars($studrow['student_rollno']); ?>" id="med<?php echo $i;?>" style="width:75px;" maxlength="12">
          </td>
 		 
 		 <td>
@@ -310,11 +316,30 @@ th, td { padding: 5px 1px !important; }
          </td>
 		 
 		 <td>
-         <input type="text" name="student_gender" value="<?php echo htmlspecialchars($studrow['student_gender']); ?>" id="student_gender<?php echo $i;?>" style="width:50px;">
+         <input type="text" name="student_gender" value="<?php echo htmlspecialchars($studrow['student_gender']); ?>" id="student_gender<?php echo $i;?>" style="width:40px;">
          </td>
 		 
 		 <td>
-         <input type="text" name="student_address" value="<?php echo htmlspecialchars($studrow['reg_no']); ?>" id="student_address<?php echo $i;?>" style="width:80px;" >
+         <input type="text" name="student_address" value="<?php echo htmlspecialchars($studrow['reg_no']); ?>" id="student_address<?php echo $i;?>" style="width:65px;" >
+         </td>
+
+		 <td>
+         <input type="text" name="height" value="<?php echo htmlspecialchars($studrow['height'] ?? ''); ?>" id="height<?php echo $i;?>" style="width:35px;" placeholder="Ht">
+         <input type="text" name="weight" value="<?php echo htmlspecialchars($studrow['weight'] ?? ''); ?>" id="weight<?php echo $i;?>" style="width:35px;" placeholder="Wt">
+         </td>
+
+		 <td>
+         <select name="education_portal_update" id="education_portal_update<?php echo $i;?>" style="width:50px; font-size:11px;">
+           <option value="yes" <?php if(isset($studrow['education_portal_update']) && strtolower($studrow['education_portal_update'])=='yes'){ echo 'selected'; } ?>>Yes</option>
+           <option value="no" <?php if(!isset($studrow['education_portal_update']) || strtolower($studrow['education_portal_update'])!='yes'){ echo 'selected'; } ?>>No</option>
+         </select>
+         </td>
+
+		 <td>
+         <select name="urise_update" id="urise_update<?php echo $i;?>" style="width:50px; font-size:11px;">
+           <option value="yes" <?php if(isset($studrow['urise_update']) && strtolower($studrow['urise_update'])=='yes'){ echo 'selected'; } ?>>Yes</option>
+           <option value="no" <?php if(!isset($studrow['urise_update']) || strtolower($studrow['urise_update'])!='yes'){ echo 'selected'; } ?>>No</option>
+         </select>
          </td>
 		 
 		 <td>
@@ -363,6 +388,7 @@ var student_name= document.getElementById('student_name'+hid).value;
 var student_fname= document.getElementById('student_fname'+hid).value;
 var m_name= document.getElementById('m_name'+hid).value;
 var student_contactno= document.getElementById('student_contactno'+hid).value;
+var whatsapp_no= document.getElementById('whatsapp_no'+hid).value;
 var student_scholar= document.getElementById('student_scholar'+hid).value;
 var sssmid= document.getElementById('sssmid'+hid).value;
 var rnoo= document.getElementById('rnoo'+hid).value;
@@ -373,9 +399,13 @@ var family_id= document.getElementById('family_id'+hid).value;
 var caste= document.getElementById('caste'+hid).value;
 var student_gender= document.getElementById('student_gender'+hid).value;
 var student_address= document.getElementById('student_address'+hid).value;
+var height= document.getElementById('height'+hid).value;
+var weight= document.getElementById('weight'+hid).value;
+var education_portal_update= document.getElementById('education_portal_update'+hid).value;
+var urise_update= document.getElementById('urise_update'+hid).value;
 
 
-var data_str= "student_class="+encodeURIComponent(student_class)+"&idm="+encodeURIComponent(idm)+"&student_name="+encodeURIComponent(student_name)+"&student_fname="+encodeURIComponent(student_fname)+"&m_name="+encodeURIComponent(m_name)+"&student_contactno="+encodeURIComponent(student_contactno)+"&sssmid="+encodeURIComponent(sssmid)+"&rnoo="+encodeURIComponent(rnoo)+"&med="+encodeURIComponent(med)+"&student_scholar="+encodeURIComponent(student_scholar)+"&student_dob="+encodeURIComponent(student_dob)+"&family_id="+encodeURIComponent(family_id)+"&caste="+encodeURIComponent(caste)+"&student_gender="+encodeURIComponent(student_gender)+"&student_address="+encodeURIComponent(student_address);
+var data_str= "student_class="+encodeURIComponent(student_class)+"&idm="+encodeURIComponent(idm)+"&student_name="+encodeURIComponent(student_name)+"&student_fname="+encodeURIComponent(student_fname)+"&m_name="+encodeURIComponent(m_name)+"&student_contactno="+encodeURIComponent(student_contactno)+"&whatsapp_no="+encodeURIComponent(whatsapp_no)+"&sssmid="+encodeURIComponent(sssmid)+"&rnoo="+encodeURIComponent(rnoo)+"&med="+encodeURIComponent(med)+"&student_scholar="+encodeURIComponent(student_scholar)+"&student_dob="+encodeURIComponent(student_dob)+"&family_id="+encodeURIComponent(family_id)+"&caste="+encodeURIComponent(caste)+"&student_gender="+encodeURIComponent(student_gender)+"&student_address="+encodeURIComponent(student_address)+"&height="+encodeURIComponent(height)+"&weight="+encodeURIComponent(weight)+"&education_portal_update="+encodeURIComponent(education_portal_update)+"&urise_update="+encodeURIComponent(urise_update);
  
 $.ajax({
 type:"POST",
@@ -405,6 +435,7 @@ function bulk_update_records(total)
             student_fname: document.getElementById('student_fname' + i).value,
             m_name: document.getElementById('m_name' + i).value,
             student_contactno: document.getElementById('student_contactno' + i).value,
+            whatsapp_no: document.getElementById('whatsapp_no' + i) ? document.getElementById('whatsapp_no' + i).value : '',
             student_scholar: document.getElementById('student_scholar' + i).value,
             sssmid: document.getElementById('sssmid' + i).value,
             rnoo: document.getElementById('rnoo' + i).value,
@@ -413,7 +444,11 @@ function bulk_update_records(total)
             family_id: document.getElementById('family_id' + i).value,
             caste: document.getElementById('caste' + i).value,
             student_gender: document.getElementById('student_gender' + i).value,
-            student_address: document.getElementById('student_address' + i).value
+            student_address: document.getElementById('student_address' + i).value,
+            height: document.getElementById('height' + i) ? document.getElementById('height' + i).value : '',
+            weight: document.getElementById('weight' + i) ? document.getElementById('weight' + i).value : '',
+            education_portal_update: document.getElementById('education_portal_update' + i) ? document.getElementById('education_portal_update' + i).value : 'no',
+            urise_update: document.getElementById('urise_update' + i) ? document.getElementById('urise_update' + i).value : 'no'
         };
         students.push(st);
     }

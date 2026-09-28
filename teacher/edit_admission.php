@@ -215,7 +215,13 @@ margin-left:20px;
 <?php 
 if(isset($_POST["update"]))
 {
-$res_up=mysqli_query($con,"update student set student_name='".$_POST["sname"]."',student_fname='".$_POST["fname"]."',m_name='".$_POST["mname"]."',student_dob='".$_POST["dob"]."',student_contactno='".$_POST["mobile"]."',student_gender='".$_POST["gender"]."',caste='".$_POST["caste"]."',rno='".$_POST["rno"]."',student_rollno='".$_POST["adhar"]."',religion='".$_POST["sssmid"]."',family_id='".$_POST["fid"]."',student_address='".$_POST["address"]."',caste_no='".$_POST['caste_no']."',alt_no='".$_POST['alt_no']."',income='".$_POST['income']."',acc_holder='".$_POST['acc_holder']."',bank='".$_POST['bank']."',mother_tong='".$_POST['mother_tong']."',fid='".$_POST['fid']."',reason_change='".$_POST['reason_change']."',mot='".$_POST['mot']."' where student_id='".$_GET["id"]."' and student_session='".$_SESSION['session']."'");  
+$whatsapp_no = mysqli_real_escape_string($con, $_POST['whatsapp_no'] ?? '');
+$height = mysqli_real_escape_string($con, $_POST['height'] ?? '');
+$weight = mysqli_real_escape_string($con, $_POST['weight'] ?? '');
+$education_portal_update = mysqli_real_escape_string($con, $_POST['education_portal_update'] ?? 'no');
+$urise_update = mysqli_real_escape_string($con, $_POST['urise_update'] ?? 'no');
+
+$res_up=mysqli_query($con,"update student set student_name='".$_POST["sname"]."',student_fname='".$_POST["fname"]."',m_name='".$_POST["mname"]."',student_dob='".$_POST["dob"]."',student_contactno='".$_POST["mobile"]."',student_gender='".$_POST["gender"]."',caste='".$_POST["caste"]."',rno='".$_POST["rno"]."',student_rollno='".$_POST["adhar"]."',religion='".$_POST["sssmid"]."',family_id='".$_POST["fid"]."',student_address='".$_POST["address"]."',caste_no='".$_POST['caste_no']."',alt_no='".$_POST['alt_no']."',income='".$_POST['income']."',acc_holder='".$_POST['acc_holder']."',bank='".$_POST['bank']."',mother_tong='".$_POST['mother_tong']."',fid='".$_POST['fid']."',reason_change='".$_POST['reason_change']."',mot='".$_POST['mot']."',whatsapp_no='$whatsapp_no',height='$height',weight='$weight',education_portal_update='$education_portal_update',urise_update='$urise_update' where student_id='".$_GET["id"]."' and student_session='".$_SESSION['session']."'");  
 $msg="Update Successfully";   
 } 
 ?>
@@ -270,8 +276,30 @@ $rowstud=mysqli_fetch_array($res_stud);
 <input type="text" name="mobile" value="<?php echo $rowstud["student_contactno"]; ?>" /></td>
 </tr>
 
+<tr><td style="font-weight:bold;">WhatsApp Number<br />
+<input type="text" name="whatsapp_no" value="<?php echo $rowstud["whatsapp_no"] ?? ''; ?>" /></td>
+</tr>
+
 <tr><td style="font-weight:bold;">Alt. Mobile No.<br />
 <input type="text" name="alt_no" value="<?php echo $rowstud["alt_no"]; ?>" /></td>
+</tr>
+
+<tr><td style="font-weight:bold;">Height / Weight<br />
+<input type="text" name="height" placeholder="Height" style="width:100px;" value="<?php echo $rowstud["height"] ?? ''; ?>" />
+<input type="text" name="weight" placeholder="Weight" style="width:100px;" value="<?php echo $rowstud["weight"] ?? ''; ?>" />
+</td>
+</tr>
+
+<tr><td style="font-weight:bold;">Education Portal Update<br />
+<input type="radio" name="education_portal_update" value="yes" <?php if(isset($rowstud["education_portal_update"]) && strtolower($rowstud["education_portal_update"])=="yes") { echo 'checked="checked"'; } ?>> Yes &nbsp;&nbsp;
+<input type="radio" name="education_portal_update" value="no" <?php if(!isset($rowstud["education_portal_update"]) || strtolower($rowstud["education_portal_update"])!="yes") { echo 'checked="checked"'; } ?>> No
+</td>
+</tr>
+
+<tr><td style="font-weight:bold;">URISE Update<br />
+<input type="radio" name="urise_update" value="yes" <?php if(isset($rowstud["urise_update"]) && strtolower($rowstud["urise_update"])=="yes") { echo 'checked="checked"'; } ?>> Yes &nbsp;&nbsp;
+<input type="radio" name="urise_update" value="no" <?php if(!isset($rowstud["urise_update"]) || strtolower($rowstud["urise_update"])!="yes") { echo 'checked="checked"'; } ?>> No
+</td>
 </tr>
 
 <tr><td style="font-weight:bold;">Gender<br />
