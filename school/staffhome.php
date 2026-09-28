@@ -48,6 +48,13 @@
 			<div style="float:left; margin-left:2%; width:30%;box-shadow: 0 8px 6px -6px black;border-bottom: 4px #FFFFFF solid;border-top: 4px #FFFFFF solid;">
 			<a href="<?php echo $var."sec_money"?>"><img src="images/Pay Roll/sm.png" style="width:323px; height:200px;" /></a>
 			</div>
+			
+			<div style="float:left; margin-left:2%; width:30%;box-shadow: 0 8px 6px -6px black;border-bottom: 4px #008040 solid;border-top: 4px #008040 solid;background:#006633;text-align:center;height:200px;">
+			<a href="<?php echo $var."teacher_app_permissions"?>" style="color:#fff;text-decoration:none;display:block;padding-top:60px;">
+				<span style="font-size:20px;font-weight:bold;">TEACHER APP<br>PERMISSIONS</span><br>
+				<small style="color:#d4edda;">Matrix Configuration</small>
+			</a>
+			</div>
 			</div>	
 				<!-- Box -->
 				

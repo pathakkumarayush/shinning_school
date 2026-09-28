@@ -32,6 +32,11 @@
 <div class="shell_one"><a href="./?pageid=task_view"><img src="taskd.png" /></a> </div>
 
 <div class="shell_one">	<a href="<?php echo $var."rept"?>"><img src="REPT.png"/></a></div>
+<div class="shell_one"><a href="<?php echo $var."teacher_app_permissions"?>" style="color:#fff;text-decoration:none;display:block;padding-top:60px;">
+				<span style="font-size:20px;font-weight:bold;margin:auto;">TEACHER APP<br><br>PERMISSIONS</span><br>
+				
+			</a>
+        </div>
 
 <br clear="all" />
 

@@ -101,7 +101,15 @@ $aliases = [
     'blood_group'   => 'bg',
     'aadhar_no'     => 'student_rollno',
     'ifsc'          => 'fid',
-    'ifsc_code'     => 'fid'
+    'ifsc_code'     => 'fid',
+    'education_portal_update' => 'education_portal_update',
+    'urise_update'  => 'urise_update',
+    'whatsapp_number' => 'whatsapp_no',
+    'whatsapp_no'   => 'whatsapp_no',
+    'height'        => 'height',
+    'weight'        => 'weight',
+    'mobile_no_2'   => 'alt_no',
+    'mother_mobile' => 'alt_no'
 ];
 
 $allowedColumns = [
@@ -117,9 +125,11 @@ $allowedColumns = [
     'std_type','fc','famt','ork','fimg','mimg','dyes','ayes','ryes','tcyes','fidyes','midyes',
     'simg','fidimg','midimg','tcimg','dimg','aimg','otimg','otyes','otnm','admimg','yadm',
     'castimg','ycast','bank_yes','bank_img','inc_yes','inc_img','sssmid_yes','sssmid_img',
+    'scholar_doc_img','scholar_doc_yes','prev_marksheet_img','prev_marksheet_yes',
     'rti','mot','fid','student_email','bg','pn','orn','ochild','rno','family_id','bank',
     'sedate','m1','m2','m3','m4','m5','m6','m7','m8','m9','m10','m','caste_no','alt_no',
-    'income','acc_holder','bank_name','apaar','pen','school_type','student_img'
+    'income','acc_holder','bank_name','apaar','pen','school_type','student_img',
+    'education_portal_update','urise_update','whatsapp_no','height','weight'
 ];
 
 $updates = [];

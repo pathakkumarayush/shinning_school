@@ -43,13 +43,68 @@ $conditions = [
     "student_session = '$session'"
 ];
 
-// Class & Section filters
-if (isset($_GET['class']) && trim($_GET['class']) !== '') {
-    $class_esc = mysqli_real_escape_string($con, trim($_GET['class']));
-    $conditions[] = "student_class = '$class_esc'";
+// Class & Section filters (Supports single class, class_ids array/CSV, or class names)
+$classList = [];
+if (isset($_GET['class_ids'])) {
+    if (is_array($_GET['class_ids'])) {
+        $classList = $_GET['class_ids'];
+    } else {
+        $classList = explode(',', (string)$_GET['class_ids']);
+    }
+} elseif (isset($_GET['classes'])) {
+    if (is_array($_GET['classes'])) {
+        $classList = $_GET['classes'];
+    } else {
+        $classList = explode(',', (string)$_GET['classes']);
+    }
+} elseif (isset($_GET['class_id']) && trim($_GET['class_id']) !== '') {
+    $classList = [$_GET['class_id']];
+} elseif (isset($_GET['class']) && trim($_GET['class']) !== '') {
+    if (is_array($_GET['class'])) {
+        $classList = $_GET['class'];
+    } elseif (strpos($_GET['class'], ',') !== false) {
+        $classList = explode(',', $_GET['class']);
+    } else {
+        $classList = [$_GET['class']];
+    }
 } elseif (isset($_GET['student_class']) && trim($_GET['student_class']) !== '') {
-    $class_esc = mysqli_real_escape_string($con, trim($_GET['student_class']));
-    $conditions[] = "student_class = '$class_esc'";
+    if (is_array($_GET['student_class'])) {
+        $classList = $_GET['student_class'];
+    } elseif (strpos($_GET['student_class'], ',') !== false) {
+        $classList = explode(',', $_GET['student_class']);
+    } else {
+        $classList = [$_GET['student_class']];
+    }
+}
+
+$cleanClasses = [];
+foreach ($classList as $cItem) {
+    $cTrim = trim((string)$cItem);
+    if ($cTrim !== '') {
+        $cleanClasses[] = mysqli_real_escape_string($con, $cTrim);
+    }
+}
+
+if (!empty($cleanClasses)) {
+    // Check if numeric IDs are present to map to class names from table `class`
+    $numericIds = [];
+    foreach ($cleanClasses as $cVal) {
+        if (is_numeric($cVal)) {
+            $numericIds[] = (int)$cVal;
+        }
+    }
+    if (!empty($numericIds)) {
+        $idStr = implode(',', $numericIds);
+        $clsLookup = mysqli_query($con, "SELECT class_id, class FROM class WHERE class_id IN ($idStr)");
+        if ($clsLookup) {
+            while ($cRow = mysqli_fetch_assoc($clsLookup)) {
+                $cleanClasses[] = mysqli_real_escape_string($con, $cRow['class']);
+            }
+        }
+    }
+    $cleanClasses = array_unique($cleanClasses);
+    $inClassSql = "'" . implode("', '", $cleanClasses) . "'";
+    $conditions[] = "student_class IN ($inClassSql)";
 }
 
 if (isset($_GET['section']) && trim($_GET['section']) !== '') {
@@ -239,6 +294,13 @@ while ($row = mysqli_fetch_assoc($result)) {
     // Enhance and format student data
     $row['scholar_no'] = $row['student_scholar'] ?? '';
     $row['age'] = $computedAge;
+    $row['blood_group'] = $row['bg'] ?? '';
+    $row['whatsapp_number'] = $row['whatsapp_no'] ?? '';
+    $row['mobile_no_2'] = $row['alt_no'] ?? '';
+    $row['father_mobile'] = $row['student_contactno'] ?? '';
+    $row['mother_mobile'] = $row['alt_no'] ?? '';
+    $row['education_portal_update'] = $row['education_portal_update'] ?? 'no';
+    $row['urise_update'] = $row['urise_update'] ?? 'no';
 
     if (!empty($row['student_img'])) {
         $row['student_img'] = 'school/upload/' . basename($row['student_img']);

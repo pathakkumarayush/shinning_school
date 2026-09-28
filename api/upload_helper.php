@@ -77,6 +77,18 @@ class UploadHelper {
             'status_field' => 'otyes',
             'suffix' => 'ot',
             'name' => 'Other Document'
+        ],
+        'scholar_document' => [
+            'db_field' => 'scholar_doc_img',
+            'status_field' => 'scholar_doc_yes',
+            'suffix' => 'scholar',
+            'name' => 'Scholar Document'
+        ],
+        'previous_year_marksheet' => [
+            'db_field' => 'prev_marksheet_img',
+            'status_field' => 'prev_marksheet_yes',
+            'suffix' => 'pmark',
+            'name' => 'Previous Year Marksheet'
         ]
     ];
 

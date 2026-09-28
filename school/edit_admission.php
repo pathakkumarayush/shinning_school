@@ -163,7 +163,7 @@ if(isset($_REQUEST["update_student"]))
 			  $t='No';
 			  }
 			  
-$res_up=mysqli_query($con,"update student set student_id='".$_POST["sid"]."',student_scholar='".$_POST["scholar"]."',student_name='".$_POST["txtname"]."',student_gender='".$_POST["gender"]."',student_dob='".$_POST["txtdob"]."',student_session='".$_SESSION["session"]."',student_rollno='".$_POST["txtrno"]."',mother_tong='".$_POST['mothertong']."',religion='".$_POST['religion']."',caste='".$_POST['caste']."',pschool='".$_POST['prev_school']."',reason_change='".$_POST['reas_school']."',subj_req='".$_POST['subject']."',is_bro='".$_POST['is_bro']."',b1='".$_POST['b1']."',c1='".$_POST['c1']."',b2='".$_POST['b2']."',c2='".$_POST['c2']."',addmisionfee='$t',student_doj='".$_POST["txtdoj"]."',student_section='".$_POST["section"]."',bus='".$_POST['bus']."',hname='".$_POST['hname']."',std_type='".$_POST['student_type']."',mot='".$_POST['mot']."',student_class='".$_POST['txtclass']."',fid='".$_POST['fid']."',fc='".$_POST['fc']."',famt='$famnnt',bg='".$_POST['bg']."',ork='".$_POST['ork']."',admb1='".$_POST['admb1']."',admb2='".$_POST['admb2']."',orn='".$_POST['orn']."',ochild='".$_POST['ochild']."',presult='".$_POST['presult']."',rti='".$_POST['rti']."',family_id='".$_POST['family_id']."',bank='".$_POST['bank']."',class='".$_POST['class']."',hostel_status='".$_POST['hostel_status']."',hostel_name='".$_POST['hostel_name']."',caste_no='".$_POST['caste_no']."',alt_no='".$_POST['alt_no']."',income='".$_POST['income']."',acc_holder='".$_POST['acc_holder']."',pen='".$_POST['pen']."',apaar='".$_POST['apaar']."',school_type='".$_POST['school_type']."',student_fname='".$_POST["txtfatname"]."',m_name='".$_POST['m_name']."',f_quali='".$_POST['fqualification']."',m_quali='".$_POST['mqualification']."',f_prof='".$_POST['fprofession']."',m_prof='".$_POST['mprofession']."',student_contactno='".$_POST["txtmobile"]."',f_tell_no_off='".$_POST['offadd']."',femail='".$_POST["femail"]."',memail='".$_POST['memail']."',student_address='".$_POST["address"]."',m_off_add='".$_POST['moaddress']."',f_off_add='".$_POST['oaddress']."',m_off_tel='".$_POST['mofftel']."' where student_id='".$_POST["sid"]."' and student_session='".$_SESSION['session']."'");
+$res_up=mysqli_query($con,"update student set student_id='".$_POST["sid"]."',student_scholar='".$_POST["scholar"]."',student_name='".$_POST["txtname"]."',student_gender='".$_POST["gender"]."',student_dob='".$_POST["txtdob"]."',student_session='".$_SESSION["session"]."',student_rollno='".$_POST["txtrno"]."',mother_tong='".$_POST['mothertong']."',religion='".$_POST['religion']."',caste='".$_POST['caste']."',pschool='".$_POST['prev_school']."',reason_change='".$_POST['reas_school']."',subj_req='".$_POST['subject']."',is_bro='".$_POST['is_bro']."',b1='".$_POST['b1']."',c1='".$_POST['c1']."',b2='".$_POST['b2']."',c2='".$_POST['c2']."',addmisionfee='$t',student_doj='".$_POST["txtdoj"]."',student_section='".$_POST["section"]."',bus='".$_POST['bus']."',hname='".$_POST['hname']."',std_type='".$_POST['student_type']."',mot='".$_POST['mot']."',student_class='".$_POST['txtclass']."',fid='".$_POST['fid']."',fc='".$_POST['fc']."',famt='$famnnt',bg='".$_POST['bg']."',ork='".$_POST['ork']."',admb1='".$_POST['admb1']."',admb2='".$_POST['admb2']."',orn='".$_POST['orn']."',ochild='".$_POST['ochild']."',presult='".$_POST['presult']."',rti='".$_POST['rti']."',family_id='".$_POST['family_id']."',bank='".$_POST['bank']."',class='".$_POST['class']."',hostel_status='".$_POST['hostel_status']."',hostel_name='".$_POST['hostel_name']."',caste_no='".$_POST['caste_no']."',alt_no='".$_POST['alt_no']."',income='".$_POST['income']."',acc_holder='".$_POST['acc_holder']."',pen='".$_POST['pen']."',apaar='".$_POST['apaar']."',school_type='".$_POST['school_type']."',student_fname='".$_POST["txtfatname"]."',m_name='".$_POST['m_name']."',f_quali='".$_POST['fqualification']."',m_quali='".$_POST['mqualification']."',f_prof='".$_POST['fprofession']."',m_prof='".$_POST['mprofession']."',student_contactno='".$_POST["txtmobile"]."',f_tell_no_off='".$_POST['offadd']."',femail='".$_POST["femail"]."',memail='".$_POST['memail']."',student_address='".$_POST["address"]."',m_off_add='".$_POST['moaddress']."',f_off_add='".$_POST['oaddress']."',m_off_tel='".$_POST['mofftel']."',education_portal_update='".($_POST['education_portal_update'] ?? 'no')."',urise_update='".($_POST['urise_update'] ?? 'no')."',whatsapp_no='".($_POST['whatsapp_no'] ?? '')."',height='".($_POST['height'] ?? '')."',weight='".($_POST['weight'] ?? '')."' where student_id='".$_POST["sid"]."' and student_session='".$_SESSION['session']."'");
 	
 ?>
  <script type="text/javascript">
@@ -782,11 +782,40 @@ while(el=inp[i++]){
 		
 		
 		 <tr><td>Annual Income</td>
-		  <td><input name="income" type="text" id="txtmobile" value="<?php if(($_POST) && (empty($_GET["upstudid"]))) echo $_POST['income']; if(isset($_GET["upstudid"])){echo $rowstud["income"];} ?>"  class="tb5"  /></td></td>
+		  <td><input name="income" type="text" id="txtmobile" value="<?php if(($_POST) && (empty($_GET["upstudid"]))) echo $_POST['income']; if(isset($_GET["upstudid"])){echo $rowstud["income"];} ?>"  class="tb5"  /></td>
 		 
 		 <td>Alt. Mobile No.<span style="color:#FF0000"></span></td> 
 		 <td><input name="alt_no" type="text" id="txtrno" value="<?php if(($_POST)  && (empty($_GET["upstudid"]))) echo $_POST['alt_no']; if(isset($_GET["upstudid"])){ echo $rowstud["alt_no"];  }?>" class="tb5" /></td> 
 		   </tr>  
+
+		 <tr><td>&nbsp;&nbsp;</td> <td>&nbsp;&nbsp;</td> <td>&nbsp;&nbsp;</td> <td>&nbsp;&nbsp;</td></tr>
+
+		 <tr>
+		 <td>WhatsApp Number</td>
+		 <td><input name="whatsapp_no" type="text" maxlength="15" value="<?php if(($_POST) && (empty($_GET["upstudid"]))) echo $_POST['whatsapp_no']; if(isset($_GET["upstudid"])){echo $rowstud["whatsapp_no"] ?? '';} ?>" class="tb5" /></td>
+		 
+		 <td>Height / Weight</td>
+		 <td>
+		   <input name="height" type="text" style="width:80px;" placeholder="Height" value="<?php if(($_POST) && (empty($_GET["upstudid"]))) echo $_POST['height']; if(isset($_GET["upstudid"])){echo $rowstud["height"] ?? '';} ?>" class="tb5" />
+		   <input name="weight" type="text" style="width:80px;" placeholder="Weight" value="<?php if(($_POST) && (empty($_GET["upstudid"]))) echo $_POST['weight']; if(isset($_GET["upstudid"])){echo $rowstud["weight"] ?? '';} ?>" class="tb5" />
+		 </td>
+		 </tr>
+
+		 <tr><td>&nbsp;&nbsp;</td> <td>&nbsp;&nbsp;</td> <td>&nbsp;&nbsp;</td> <td>&nbsp;&nbsp;</td></tr>
+
+		 <tr>
+		 <td>Education Portal Update</td>
+		 <td>
+		   <input type="radio" name="education_portal_update" value="yes" <?php if(isset($rowstud["education_portal_update"]) && strtolower($rowstud["education_portal_update"])=="yes") { echo 'checked="checked"'; } ?>> Yes &nbsp;&nbsp;
+		   <input type="radio" name="education_portal_update" value="no" <?php if(!isset($rowstud["education_portal_update"]) || strtolower($rowstud["education_portal_update"])!="yes") { echo 'checked="checked"'; } ?>> No
+		 </td>
+		 
+		 <td>URISE Update</td>
+		 <td>
+		   <input type="radio" name="urise_update" value="yes" <?php if(isset($rowstud["urise_update"]) && strtolower($rowstud["urise_update"])=="yes") { echo 'checked="checked"'; } ?>> Yes &nbsp;&nbsp;
+		   <input type="radio" name="urise_update" value="no" <?php if(!isset($rowstud["urise_update"]) || strtolower($rowstud["urise_update"])!="yes") { echo 'checked="checked"'; } ?>> No
+		 </td>
+		 </tr>  
 			  
 			  
 		<tr><td>&nbsp;&nbsp;</td> <td>&nbsp;&nbsp;</td> <td>&nbsp;&nbsp;</td> <td>&nbsp;&nbsp;</td></tr>	
