@@ -37,6 +37,17 @@ if (!$student) {
     exit;
 }
 
+$stClsEsc = mysqli_real_escape_string($con, $student['student_class'] ?? '');
+$rnoQ = mysqli_query($con, "
+    SELECT rno FROM roll_no 
+    WHERE sid = '$student_id' 
+      AND ses = '$session' 
+    ORDER BY (class = '$stClsEsc') DESC, id DESC 
+    LIMIT 1
+");
+$student['rno'] = ($rnoQ && $rRow = mysqli_fetch_assoc($rnoQ)) ? $rRow['rno'] : null;
+$student['roll_no'] = $student['rno'];
+
 if (!empty($student['student_dob'])) {
     $student['student_dob'] = date("d-M-Y", strtotime($student['student_dob']));
 }

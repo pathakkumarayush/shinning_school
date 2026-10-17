@@ -131,11 +131,30 @@ if ($teacher_id && $teacher_type) {
 // --------------------
 // Fetch all students for this class
 // --------------------
+$className_esc = mysqli_real_escape_string($con, $className);
+$session_esc   = mysqli_real_escape_string($con, $session);
+
 $studentsQuery = mysqli_query($con, "
-    SELECT * FROM student 
-    WHERE student_class='$className' 
-      AND status = 0 AND student_session='$session' 
-    ORDER BY rno ASC
+    SELECT s.*, r.rno AS current_rno 
+    FROM student s
+    LEFT JOIN roll_no r ON (
+        r.sid = s.student_id 
+        AND r.ses = '$session_esc' 
+        AND (r.class = s.student_class OR r.class IS NULL)
+    )
+    WHERE s.student_class = '$className_esc' 
+      AND s.status = 0 
+      AND s.student_session = '$session_esc' 
+    ORDER BY 
+        CASE 
+            WHEN r.rno IS NULL OR TRIM(r.rno) = '' THEN 2
+            WHEN r.rno REGEXP '^[0-9]+$' THEN 0
+            ELSE 1
+        END ASC,
+        CAST(r.rno AS UNSIGNED) ASC,
+        CAST(REGEXP_REPLACE(r.rno, '[^0-9]', '') AS UNSIGNED) ASC,
+        r.rno ASC,
+        s.student_name ASC
 ");
 
 $students = [];
@@ -145,6 +164,7 @@ while ($student = mysqli_fetch_assoc($studentsQuery)) {
         'student_id'       => $student['student_id'],
         'student_username' => $student['uid'],
         'student_name'     => $student['student_name'],
+        'rno'              => $student['current_rno'] ?? '',
         'class'            => $student['student_class'],
         'mobile'           => $student['student_contactno'],
         'subjects'         => []

@@ -58,6 +58,19 @@ if ($session_type == 'student' && !empty($data['student_img'])) {
 }
 
 if ($session_type == 'student') {
+    $sidEsc = mysqli_real_escape_string($con, $data['student_id'] ?? '');
+    $clsEsc = mysqli_real_escape_string($con, $data['student_class'] ?? '');
+    $sesEsc = mysqli_real_escape_string($con, $session);
+    $rnoQ = mysqli_query($con, "
+        SELECT rno FROM roll_no 
+        WHERE sid = '$sidEsc' 
+          AND ses = '$sesEsc' 
+        ORDER BY (class = '$clsEsc') DESC, id DESC 
+        LIMIT 1
+    ");
+    $data['rno'] = ($rnoQ && $rRow = mysqli_fetch_assoc($rnoQ)) ? $rRow['rno'] : null;
+    $data['roll_no'] = $data['rno'];
+
     if (!empty($data['student_dob'])) {
         $data['student_dob'] = date("d-M-Y", strtotime($data['student_dob']));
     }

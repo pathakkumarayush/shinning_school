@@ -77,11 +77,25 @@ $session_esc = mysqli_real_escape_string($con, $session);
 $studQuery = "
     SELECT s.student_id, s.student_name, s.student_fname, s.student_scholar, s.student_rollno, s.student_class, s.student_section, s.student_contactno, r.rno AS roll_no_tbl
     FROM `student` s
-    LEFT JOIN `roll_no` r ON (r.sid = s.student_id AND r.class = s.student_class AND r.ses = '$session_esc')
+    LEFT JOIN `roll_no` r ON (
+        r.sid = s.student_id 
+        AND r.ses = '$session_esc' 
+        AND (r.class = s.student_class OR r.class IS NULL)
+    )
     WHERE s.student_class IN ($class_sql_in)
       AND s.student_session = '$session_esc'
       AND s.status = '0'
-    ORDER BY s.student_class ASC, s.student_name ASC
+    ORDER BY 
+        s.student_class ASC,
+        CASE 
+            WHEN r.rno IS NULL OR TRIM(r.rno) = '' THEN 2
+            WHEN r.rno REGEXP '^[0-9]+$' THEN 0
+            ELSE 1
+        END ASC,
+        CAST(r.rno AS UNSIGNED) ASC,
+        CAST(REGEXP_REPLACE(r.rno, '[^0-9]', '') AS UNSIGNED) ASC,
+        r.rno ASC,
+        s.student_name ASC
 ";
 $studRes = mysqli_query($con, $studQuery);
 
@@ -152,7 +166,7 @@ while ($s = mysqli_fetch_assoc($studRes)) {
         $recordDate = date('d-m-Y');
     }
 
-    $dispRoll = !empty($s['student_rollno']) ? $s['student_rollno'] : (!empty($s['roll_no_tbl']) ? $s['roll_no_tbl'] : '');
+    $dispRoll = !empty($s['roll_no_tbl']) ? $s['roll_no_tbl'] : (!empty($s['student_rollno']) ? $s['student_rollno'] : '');
 
     $studentsList[] = [
         'sr_no'        => $sr++,
@@ -161,6 +175,7 @@ while ($s = mysqli_fetch_assoc($studRes)) {
         'father_name'  => ucwords(strtolower($s['student_fname'] ?? '')),
         'scholar_no'   => $s['student_scholar'] ?? '',
         'roll_no'      => $dispRoll,
+        'rno'          => $dispRoll,
         'class'        => $s['student_class'],
         'section'      => $s['student_section'] ?? '',
         'status'       => $statusStr,

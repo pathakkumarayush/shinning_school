@@ -62,12 +62,14 @@ try {
         }
 
         $data[] = [
-            'student_id' => $studentId,
-            'scholar_no' => $student['student_scholar'] ?? '',
+            'student_id'   => $studentId,
+            'scholar_no'   => $student['student_scholar'] ?? '',
+            'rno'          => $student['rno'] ?? '',
+            'roll_no'      => $student['rno'] ?? '',
             'student_name' => $student['student_name'] ?? '',
-            'father_name' => $student['student_fname'] ?? '',
-            'class' => $student['student_class'] ?? '',
-            'documents' => $documents
+            'father_name'  => $student['student_fname'] ?? '',
+            'class'        => $student['student_class'] ?? '',
+            'documents'    => $documents
         ];
     }
 

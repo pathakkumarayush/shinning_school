@@ -73,13 +73,27 @@ if ($type === null || $type === 'enquiry') {
 
 // 2. Fetch Today Admission (from 'student' table)
 if ($type === null || $type === 'admission') {
-    $where = build_where($con, $date, 'student_session', $session, 'student_school', $school);
-    $query = "SELECT * FROM student WHERE $where ORDER BY student_name ASC";
+    $sesEsc = mysqli_real_escape_string($con, $session ?? '');
+    $query = "
+        SELECT s.*, r.rno AS roll_no_current
+        FROM student s
+        LEFT JOIN roll_no r ON (
+            r.sid = s.student_id 
+            AND r.ses = '$sesEsc' 
+            AND (r.class = s.student_class OR r.class IS NULL)
+        )
+        WHERE $where 
+        ORDER BY s.student_name ASC
+    ";
     $result = mysqli_query($con, $query);
     
     $admissions = [];
     if ($result) {
         while ($row = mysqli_fetch_assoc($result)) {
+            $row['rno'] = $row['roll_no_current'] !== null ? $row['roll_no_current'] : null;
+            $row['roll_no'] = $row['rno'];
+            unset($row['roll_no_current']);
+
             // Apply standard mappings as in get_student.php
             if (!empty($row['student_img'])) {
                 $row['student_img'] = 'school/upload/' . basename($row['student_img']);

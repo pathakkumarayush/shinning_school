@@ -60,17 +60,30 @@ while ($s = mysqli_fetch_assoc($subRes)) {
 }
 
 
-// --------------------
-// Get Students
-// --------------------
+$className_esc = mysqli_real_escape_string($con, $className);
+$session_esc   = mysqli_real_escape_string($con, $session);
+
 $stuRes = mysqli_query($con, "
-    SELECT student_id, uid, student_name, student_class, student_section
-    FROM student
-    WHERE student_class='$className'
-     
-      AND student_session='$session'
-      AND status='0'
-    ORDER BY student_name ASC
+    SELECT s.student_id, s.uid, s.student_name, s.student_class, s.student_section, r.rno AS current_rno
+    FROM student s
+    LEFT JOIN roll_no r ON (
+        r.sid = s.student_id 
+        AND r.ses = '$session_esc' 
+        AND (r.class = s.student_class OR r.class IS NULL)
+    )
+    WHERE s.student_class = '$className_esc'
+      AND s.student_session = '$session_esc'
+      AND s.status = '0'
+    ORDER BY 
+        CASE 
+            WHEN r.rno IS NULL OR TRIM(r.rno) = '' THEN 2
+            WHEN r.rno REGEXP '^[0-9]+$' THEN 0
+            ELSE 1
+        END ASC,
+        CAST(r.rno AS UNSIGNED) ASC,
+        CAST(REGEXP_REPLACE(r.rno, '[^0-9]', '') AS UNSIGNED) ASC,
+        r.rno ASC,
+        s.student_name ASC
 ");
 
 $students = [];
@@ -81,6 +94,7 @@ while ($stu = mysqli_fetch_assoc($stuRes)) {
         'student_id'   => $stu['student_id'],
         'uid'          => $stu['uid'],
         'student_name' => $stu['student_name'],
+        'rno'          => $stu['current_rno'] ?? '',
         'subjects'     => []
     ];
 

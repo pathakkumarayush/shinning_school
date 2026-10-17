@@ -258,7 +258,30 @@ if (isset($_GET['pincode']) && trim($_GET['pincode']) !== '') {
 }
 
 $whereClause = implode(' AND ', $conditions);
-$query = "SELECT * FROM student WHERE $whereClause ORDER BY student_class ASC, student_name ASC";
+
+// Join roll_no table partitioned by student_id and session to ensure 1-to-1 match without duplicates
+$query = "
+    SELECT s.*, r.roll_no_current
+    FROM student s
+    LEFT JOIN (
+        SELECT sid AS r_sid, ses AS r_ses, rno AS roll_no_current,
+               ROW_NUMBER() OVER (PARTITION BY sid, ses ORDER BY id DESC) as rn
+        FROM roll_no
+        WHERE ses = '$session'
+    ) r ON (r.r_sid = s.student_id AND r.rn = 1)
+    WHERE $whereClause
+    ORDER BY 
+        s.student_class ASC,
+        CASE 
+            WHEN r.roll_no_current IS NULL OR TRIM(r.roll_no_current) = '' THEN 2
+            WHEN r.roll_no_current REGEXP '^[0-9]+$' THEN 0
+            ELSE 1
+        END ASC,
+        CAST(r.roll_no_current AS UNSIGNED) ASC,
+        CAST(REGEXP_REPLACE(r.roll_no_current, '[^0-9]', '') AS UNSIGNED) ASC,
+        r.roll_no_current ASC,
+        s.student_name ASC
+";
 
 $result = mysqli_query($con, $query);
 
@@ -290,6 +313,12 @@ while ($row = mysqli_fetch_assoc($result)) {
     if ($max_age !== null && ($computedAge === null || $computedAge > $max_age)) {
         continue;
     }
+
+    // Map active session roll number from roll_no table
+    $currentRoll = $row['roll_no_current'] !== null ? $row['roll_no_current'] : null;
+    $row['rno'] = $currentRoll;
+    $row['roll_no'] = $currentRoll;
+    unset($row['roll_no_current']);
 
     // Enhance and format student data
     $row['scholar_no'] = $row['student_scholar'] ?? '';

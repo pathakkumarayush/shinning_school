@@ -106,11 +106,14 @@ $query = "
         s.student_scholar AS scholar_no,
         s.student_rollno AS roll_no,
         s.student_section,
-        s.student_contactno AS mobile
+        s.student_contactno AS mobile,
+        r.rno AS roll_no_current
     FROM `exam_copy_collection` ecc
     LEFT JOIN `student` s 
         ON (s.student_id = ecc.student OR s.id = ecc.student)
         AND (s.student_session = ecc.session OR ecc.session = '')
+    LEFT JOIN `roll_no` r
+        ON (r.sid = s.student_id AND r.ses = ecc.session AND (r.class = ecc.class OR r.class IS NULL))
     $whereClause
     ORDER BY ecc.id DESC
 ";
@@ -125,13 +128,15 @@ if (!$res) {
 
 $data = [];
 while ($row = mysqli_fetch_assoc($res)) {
+    $currentRoll = !empty($row['roll_no_current']) ? $row['roll_no_current'] : ($row['roll_no'] ?? '');
     $data[] = [
         'id'              => (int)$row['id'],
         'student_id'      => $row['student_id'],
         'student_name'    => $row['student_name'] ?? '',
         'father_name'     => $row['father_name'] ?? '',
         'scholar_no'      => $row['scholar_no'] ?? '',
-        'roll_no'         => $row['roll_no'] ?? '',
+        'roll_no'         => $currentRoll,
+        'rno'             => $currentRoll,
         'class'           => $row['class'],
         'section'         => $row['student_section'] ?? '',
         'exam'            => $row['exam'],

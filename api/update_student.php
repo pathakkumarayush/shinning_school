@@ -317,6 +317,19 @@ if (!empty($updates)) {
 
     if (mysqli_query($con, $query)) {
         $affected = mysqli_affected_rows($con);
+
+        if (isset($input['rno']) || isset($input['roll_no']) || isset($input['rnoo'])) {
+            $rnoVal = mysqli_real_escape_string($con, $input['rno'] ?? $input['roll_no'] ?? $input['rnoo']);
+            $checkRoll = mysqli_query($con, "SELECT id FROM roll_no WHERE sid = '$targetStudentId' AND ses = '$session_esc' LIMIT 1");
+            if ($checkRoll && mysqli_num_rows($checkRoll) > 0) {
+                mysqli_query($con, "UPDATE roll_no SET rno = '$rnoVal' WHERE sid = '$targetStudentId' AND ses = '$session_esc'");
+            } else {
+                $stNameEsc = mysqli_real_escape_string($con, $existingStudent['student_name'] ?? '');
+                $stClsEsc  = mysqli_real_escape_string($con, $studentClass);
+                mysqli_query($con, "INSERT INTO roll_no (sid, class, rno, ses, sname) VALUES ('$targetStudentId', '$stClsEsc', '$rnoVal', '$session_esc', '$stNameEsc')");
+            }
+        }
+
         http_response_code(200);
         echo json_encode([
             'status'        => true,

@@ -94,6 +94,16 @@ if ($student_id !== '') {
     $stIdCanonical = $student['student_id'];
     $stUid = $student['uid'];
 
+    // Fetch Roll Number from roll_no for current session
+    $rnoSingleQuery = mysqli_query($con, "
+        SELECT rno FROM roll_no 
+        WHERE sid = '$stIdCanonical' 
+          AND ses = '$session_esc' 
+        ORDER BY (class = '" . mysqli_real_escape_string($con, $stClass) . "') DESC, id DESC 
+        LIMIT 1
+    ");
+    $currentRollNo = ($rnoSingleQuery && $rRow = mysqli_fetch_assoc($rnoSingleQuery)) ? $rRow['rno'] : ($student['student_rollno'] ?? '');
+
     // Query Max Marks config from `exam` table for this class & exam
     $examConfig = [];
     $confQuery = mysqli_query($con, "SELECT * FROM exam WHERE class = '" . mysqli_real_escape_string($con, $stClass) . "' AND examination = '$exam_esc' AND session = '$session_esc'");
@@ -183,7 +193,8 @@ if ($student_id !== '') {
             'student'  => [
                 'student_id'   => $student['student_id'],
                 'scholar_no'   => $student['student_scholar'] ?? '',
-                'roll_no'      => $student['student_rollno'] ?? '',
+                'roll_no'      => $currentRollNo,
+                'rno'          => $currentRollNo,
                 'name'         => $student['student_name'] ?? '',
                 'father_name'  => $student['student_fname'] ?? '',
                 'mother_name'  => $student['m_name'] ?? '',
@@ -219,8 +230,29 @@ if ($class_name === '') {
     exit;
 }
 
-// Query all students in this class
-$classStQuery = mysqli_query($con, "SELECT * FROM student WHERE student_class = '$class_esc' AND student_session = '$session_esc' AND status = 0 ORDER BY student_name ASC");
+// Query all students in this class sorted by roll number
+$classStQuery = mysqli_query($con, "
+    SELECT s.*, r.rno AS current_rno 
+    FROM student s
+    LEFT JOIN roll_no r ON (
+        r.sid = s.student_id 
+        AND r.ses = '$session_esc' 
+        AND (r.class = s.student_class OR r.class IS NULL)
+    )
+    WHERE s.student_class = '$class_esc' 
+      AND s.student_session = '$session_esc' 
+      AND s.status = 0 
+    ORDER BY 
+        CASE 
+            WHEN r.rno IS NULL OR TRIM(r.rno) = '' THEN 2
+            WHEN r.rno REGEXP '^[0-9]+$' THEN 0
+            ELSE 1
+        END ASC,
+        CAST(r.rno AS UNSIGNED) ASC,
+        CAST(REGEXP_REPLACE(r.rno, '[^0-9]', '') AS UNSIGNED) ASC,
+        r.rno ASC,
+        s.student_name ASC
+");
 if (!$classStQuery || mysqli_num_rows($classStQuery) === 0) {
     http_response_code(404);
     echo json_encode(['status' => false, 'message' => "No active students found in Class '$class_name' for session '$session'"]);
@@ -312,7 +344,8 @@ while ($st = mysqli_fetch_assoc($classStQuery)) {
         'student' => [
             'student_id'  => $st['student_id'],
             'scholar_no'  => $st['student_scholar'] ?? '',
-            'roll_no'     => $st['student_rollno'] ?? '',
+            'roll_no'     => !empty($st['current_rno']) ? $st['current_rno'] : ($st['student_rollno'] ?? ''),
+            'rno'         => !empty($st['current_rno']) ? $st['current_rno'] : ($st['student_rollno'] ?? ''),
             'name'        => $st['student_name'] ?? '',
             'father_name' => $st['student_fname'] ?? '',
             'section'     => $st['student_section'] ?? ''

@@ -51,6 +51,19 @@ if ($user['type'] === 'student') {
     $detail = mysqli_fetch_assoc($res_all);
     
     if ($detail) {
+        $sidEsc = mysqli_real_escape_string($con, $detail['student_id'] ?? '');
+        $clsEsc = mysqli_real_escape_string($con, $detail['student_class'] ?? '');
+        $sesEsc = mysqli_real_escape_string($con, $session);
+        $rnoQ = mysqli_query($con, "
+            SELECT rno FROM roll_no 
+            WHERE sid = '$sidEsc' 
+              AND ses = '$sesEsc' 
+            ORDER BY (class = '$clsEsc') DESC, id DESC 
+            LIMIT 1
+        ");
+        $detail['rno'] = ($rnoQ && $rRow = mysqli_fetch_assoc($rnoQ)) ? $rRow['rno'] : null;
+        $detail['roll_no'] = $detail['rno'];
+
         if (!empty($detail['student_img'])) {
             $detail['student_img'] = 'school/upload/' . basename($detail['student_img']);
         }

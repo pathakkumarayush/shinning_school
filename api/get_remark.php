@@ -44,16 +44,30 @@ if (!$classRow) {
 $className = $classRow['class'];
 
 
-// --------------------
-// Fetch all students class-wise
-// --------------------
+$className_esc = mysqli_real_escape_string($con, $className);
+$session_esc   = mysqli_real_escape_string($con, $session);
+
 $studentsQuery = mysqli_query($con, "
-    SELECT student_id, uid, student_name, student_class 
-    FROM student 
-    WHERE student_class='$className'
-      AND status = 0
-      AND student_session='$session'
-    ORDER BY student_name ASC
+    SELECT s.student_id, s.uid, s.student_name, s.student_class, r.rno AS current_rno 
+    FROM student s
+    LEFT JOIN roll_no r ON (
+        r.sid = s.student_id 
+        AND r.ses = '$session_esc' 
+        AND (r.class = s.student_class OR r.class IS NULL)
+    )
+    WHERE s.student_class = '$className_esc'
+      AND s.status = 0
+      AND s.student_session = '$session_esc'
+    ORDER BY 
+        CASE 
+            WHEN r.rno IS NULL OR TRIM(r.rno) = '' THEN 2
+            WHEN r.rno REGEXP '^[0-9]+$' THEN 0
+            ELSE 1
+        END ASC,
+        CAST(r.rno AS UNSIGNED) ASC,
+        CAST(REGEXP_REPLACE(r.rno, '[^0-9]', '') AS UNSIGNED) ASC,
+        r.rno ASC,
+        s.student_name ASC
 ");
 
 $students = [];
@@ -78,6 +92,7 @@ while ($stu = mysqli_fetch_assoc($studentsQuery)) {
     $students[] = [
         'student_id'   => $stu['student_id'],
         'student_name' => $stu['student_name'],
+        'rno'          => $stu['current_rno'] ?? '',
         'class'        => $stu['student_class'],
         'attendance'   => $remarkRow ? $remarkRow['attend'] : null,
         'remark'       => $remarkRow ? $remarkRow['rmk'] : null,

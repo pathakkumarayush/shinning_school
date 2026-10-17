@@ -17,11 +17,28 @@ class StudentRepository {
         $student_id = mysqli_real_escape_string($this->con, $student_id);
         $session = mysqli_real_escape_string($this->con, $session);
 
-        $query = "SELECT * FROM student WHERE student_id = '$student_id' AND student_session = '$session' AND status = 0 LIMIT 1";
+        $query = "
+            SELECT s.*, r.rno AS roll_no_current 
+            FROM student s
+            LEFT JOIN roll_no r ON (
+                r.sid = s.student_id 
+                AND r.ses = '$session' 
+                AND (r.class = s.student_class OR r.class IS NULL)
+            )
+            WHERE s.student_id = '$student_id' 
+              AND s.student_session = '$session' 
+              AND s.status = 0 
+            ORDER BY (r.class = s.student_class) DESC, r.id DESC
+            LIMIT 1
+        ";
         $result = mysqli_query($this->con, $query);
 
         if ($result && mysqli_num_rows($result) > 0) {
-            return mysqli_fetch_assoc($result);
+            $row = mysqli_fetch_assoc($result);
+            $row['rno'] = $row['roll_no_current'] !== null ? $row['roll_no_current'] : null;
+            $row['roll_no'] = $row['rno'];
+            unset($row['roll_no_current']);
+            return $row;
         }
         return null;
     }
@@ -33,12 +50,36 @@ class StudentRepository {
         $class = mysqli_real_escape_string($this->con, $class);
         $session = mysqli_real_escape_string($this->con, $session);
 
-        $query = "SELECT * FROM student WHERE student_class = '$class' AND student_session = '$session' AND status = 0 ORDER BY student_name ASC";
+        $query = "
+            SELECT s.*, r.rno AS roll_no_current 
+            FROM student s
+            LEFT JOIN roll_no r ON (
+                r.sid = s.student_id 
+                AND r.ses = '$session' 
+                AND (r.class = s.student_class OR r.class IS NULL)
+            )
+            WHERE s.student_class = '$class' 
+              AND s.student_session = '$session' 
+              AND s.status = 0 
+            ORDER BY 
+                CASE 
+                    WHEN r.rno IS NULL OR TRIM(r.rno) = '' THEN 2
+                    WHEN r.rno REGEXP '^[0-9]+$' THEN 0
+                    ELSE 1
+                END ASC,
+                CAST(r.rno AS UNSIGNED) ASC,
+                CAST(REGEXP_REPLACE(r.rno, '[^0-9]', '') AS UNSIGNED) ASC,
+                r.rno ASC,
+                s.student_name ASC
+        ";
         $result = mysqli_query($this->con, $query);
 
         $students = [];
         if ($result) {
             while ($row = mysqli_fetch_assoc($result)) {
+                $row['rno'] = $row['roll_no_current'] !== null ? $row['roll_no_current'] : null;
+                $row['roll_no'] = $row['rno'];
+                unset($row['roll_no_current']);
                 $students[] = $row;
             }
         }
