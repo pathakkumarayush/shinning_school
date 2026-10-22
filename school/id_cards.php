@@ -38,7 +38,7 @@ while($rowstud=mysqli_fetch_array($search))
 	   <div style="width:100%;">
 	   
 	  <div style="float:left; width:23%; height:104px;  font-size:13px; margin-left:2px; font-weight:bold;">
-	  <span style="font-size:9px; margin-left:9px; color:#FF0000;">Ses:2025-2026</span><br clear="all">
+	  <span style="font-size:9px; margin-left:9px; color:#FF0000;">Ses:<?php echo $_GET['ses'];?></span><br clear="all">
 	
 	 <?php
 	 $abc = $rowstud['student_img']; 

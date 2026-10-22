@@ -600,8 +600,8 @@ thead.report-header {
 				
 				 <td class="report-header-cell" colspan="35">
                  <div class="header-info">
-				 <span style="color:#000000; font-size:18px; font-weight:bold;"><center>Shining Public Hr. Sec. School Raisen (M.P.)</center></span><br>
-				 <span style="color:#000000; font-size:14px; font-weight:bold;"><center>Jain  Mandir Road Alipur, Ashta</center></span>
+				 <span style="color:#000000; font-size:18px; font-weight:bold;"><center>Shining Public Hr. Sec. School</center></span><br>
+				 <span style="color:#000000; font-size:14px; font-weight:bold;"><center>Sagar Road, Raisen (M.P.)</center></span>
 				 </div>
                  </td>
 				</tr>
