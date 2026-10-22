@@ -279,8 +279,7 @@ $query = "
         END ASC,
         CAST(r.roll_no_current AS UNSIGNED) ASC,
         CAST(REGEXP_REPLACE(r.roll_no_current, '[^0-9]', '') AS UNSIGNED) ASC,
-        r.roll_no_current ASC,
-        s.student_name ASC
+        r.roll_no_current ASC
 ";
 
 $result = mysqli_query($con, $query);
